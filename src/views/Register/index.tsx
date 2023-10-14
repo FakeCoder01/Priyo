@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { BottomCard, Container, Description, TopCard } from "./styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -15,6 +15,7 @@ import { SceneName } from "~src/@types/SceneName";
 import { Text } from "react-native";
 import { Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { Pressable } from "react-native";
 import { SERVER_URL } from "~constants";
 
@@ -23,18 +24,7 @@ export const useCustomBottomInset = () => {
   return Math.max(20, insets.bottom + 5);
 };
 
-const Authentication = () => {
-
-  useEffect(() => {
-    const checkUserAlreadyLogged = async () => {
-      const auth_token = await AsyncStorage.getItem('token');
-      if (auth_token !== null && auth_token !== undefined && auth_token !== ''){
-        navigation.navigate(SceneName.Main);
-      }
-    };
-    checkUserAlreadyLogged();
-  }, []);
-
+const Register = () => {
   const insets = useSafeAreaInsets();
   const bottomInset = useCustomBottomInset();
   const themeContext = useContext(ThemeContext);
@@ -42,9 +32,10 @@ const Authentication = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     setLoading(true);
 
     if(email == '' || password == ''){
@@ -53,30 +44,36 @@ const Authentication = () => {
       return;
     }
 
-    const response = await fetch(SERVER_URL + "/user/login/", {
+    if(password != confirmPassword){
+      setLoading(false);
+      Alert.alert("Password mismatch");
+      return;
+    }
+
+    const response = await fetch(SERVER_URL + "/user/signup/", {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         "username" : email,
-        "password" : password
+        "password" : password,
+        "confirm_password" : confirmPassword
       }),
     });
     const data = await response.json();
-    if (response.ok && response.status === 200) {
+    if (response.ok && response.status === 201 && data.next === 'verify') {
+      setLoading(false);
       const authToken  = data.token;
       await AsyncStorage.setItem('token', authToken);
-      Alert.alert("Logged in successfully");
-      setLoading(false);
-      navigation.navigate(SceneName.Main);
+      Alert.alert("Otp : " + data.email_otp);
+      navigation.navigate(SceneName.OneTimeCode as any, {email : email});
 
     } else {
-      Alert.alert("Wrong email or password")
       setLoading(false);
+      Alert.alert(data.detail);
     }
   };
-
 
 
   return ( 
@@ -104,16 +101,28 @@ const Authentication = () => {
         </TopCard>
         <BottomCard style={{ paddingBottom: bottomInset }}>
           <Title>
-            Login to your <Highlight>Account</Highlight>
+            Create an <Highlight>Account</Highlight>
           </Title>
           <Description>
-            Don't have an account? 
-            <Pressable onPress={() => navigation.navigate(SceneName.Register)}>
+            Already have an account? 
+
+            <Pressable onPress={() => navigation.navigate(SceneName.Authentication)} >
               <Text style={{ fontWeight: '900', color: '#2ceae1', textDecorationLine: 'underline'}}>
-                Sign up
+                Log in
               </Text>
             </Pressable>
+
+
           </Description>
+{/* 
+          <NameInput
+            blurOnSubmit={false}
+            placeholder="Your name"
+            setName={setName}
+          /> 
+phind.co*/}
+
+
           <EmailInput
             blurOnSubmit={false}
             placeholder="Email"
@@ -127,9 +136,16 @@ const Authentication = () => {
             setPassword={setPassword}
           />
 
+          <PasswordInput
+            secureTextEntry={true}
+            blurOnSubmit={false}
+            placeholder="Password"
+            setPassword={setConfirmPassword}
+          />
 
-          <Button loading={loading} onPress={handleLogin}>
-            Login
+
+          <Button loading={loading} onPress={handleRegister}>
+            Register
           </Button>
 
 
@@ -143,4 +159,4 @@ const Authentication = () => {
   );
 };
 
-export default Authentication;
+export default Register;

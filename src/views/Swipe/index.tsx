@@ -11,6 +11,7 @@ import { Swipe } from "./components/SwipeHandler/hooks/useSwipeGesture";
 import SwipeHandler, { swipeHandlerRef } from "./components/SwipeHandler";
 import SwipeRequestFeedback from "./components/SwipeRequestFeedback";
 import SwipeBackButton from "./components/SwipeBackButton";
+import { SERVER_URL } from "~constants";
 
 export const useCustomBottomInset = () => {
   const insets = useSafeAreaInsets();

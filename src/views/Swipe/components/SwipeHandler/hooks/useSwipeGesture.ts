@@ -126,6 +126,8 @@ export const useSwipeGesture = ({
   ) => {
     "worklet";
 
+    
+
     // Avoid concurrency, should gotoDirection only once
     if (!enabled) return;
     runOnJS(setEnabled)(false);

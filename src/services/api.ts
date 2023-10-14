@@ -1,7 +1,7 @@
 import axios from "axios";
-
+import { SERVER_URL } from "~constants";
 const axiosInstance = axios.create({
-  baseURL: "https://60aa8be766f1d00017772f6a.mockapi.io",
+  baseURL: SERVER_URL,
 });
 
 export default axiosInstance;

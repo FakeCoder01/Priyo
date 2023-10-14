@@ -26,6 +26,7 @@ import LogoActive from "~images/LogoActive.svg";
 import MessagesActive from "~images/MessagesActive.svg";
 import ProfileActive from "~images/UserActive.svg";
 import { Dimensions } from "react-native";
+import Register from "~views/Register";
 
 const Tab = createMaterialTopTabNavigator<RootStackParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
@@ -99,7 +100,7 @@ function Router() {
         <Stack.Screen
           name={SceneName.EditProfile}
           options={{
-            headerTitle: "Crie seu perfil",
+            headerTitle: "Set up your profile",
             headerShown: true,
             headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
           }}
@@ -114,6 +115,7 @@ function Router() {
         />
         <Stack.Screen name={SceneName.OneTimeCode} component={OneTimeCode} />
       </Stack.Group>
+      <Stack.Screen name={SceneName.Register} component={Register} />
     </Stack.Navigator>
   );
 }

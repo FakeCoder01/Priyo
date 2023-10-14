@@ -1,6 +1,6 @@
-import React, { useImperativeHandle } from "react";
+import React, { useImperativeHandle, useState } from "react";
 import { StyleSheet } from "react-native";
-import { ACTION_OFFSET } from "~constants";
+import { ACTION_OFFSET, SERVER_URL } from "~constants";
 import FeedbackCard from "~components/FeedbackCard";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
@@ -14,6 +14,8 @@ import { useDidMountEffect } from "~services/utils";
 import { getCurrentCardId } from "~store/selectors";
 import { useDispatch, useSelector } from "react-redux";
 import { Actions } from "~store/reducers";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const ROTATION_DEG = 8;
 
@@ -23,17 +25,78 @@ interface ISwipeHandler {
 
 export interface ISwipeHandlerRef {
   gotoDirection: (swipeType: Swipe) => void;
+
 }
 
 export const swipeHandlerRef = React.createRef<ISwipeHandlerRef>();
 
 const SwipeHandler: React.FC<ISwipeHandler> = ({ card }) => {
+
+  const [token, setToken] = useState("");
   const dispatch = useDispatch();
   const currentCardId = useSelector(getCurrentCardId);
 
   const isFirstCard = card.id === currentCardId;
 
-  const onSwipeComplete = (swipeType: Swipe) => {
+  const onSwipeComplete = async (swipeType: Swipe) => {
+    
+    const storedToken = await AsyncStorage.getItem('token');
+
+    const user_id = card.id;
+
+    if(swipeType === Swipe.Like){
+      try{
+        const send_right = await fetch(SERVER_URL + "/api/swipe/right/", {
+          method : "POST",
+          headers : {
+            "Authorization" : "Token " + storedToken,
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify({
+            "whom_liked" : user_id
+          })
+        });
+        const right_swipe = await send_right.json();
+        if(send_right.ok && send_right.status === 200){
+          // just right swipe
+          console.log("Right Swipped User")
+        }
+        else if(send_right.ok && send_right.status === 201){
+          // got a match
+          console.log(right_swipe.message)
+        }else{
+          console.log("went wrong");
+        }
+      }
+      catch(error){
+        console.log(error);
+      }
+    }else if(swipeType === Swipe.Dislike){
+      try{
+        const send_left = await fetch(SERVER_URL + "/api/swipe/left/", {
+          method : "POST",
+          headers : {
+            "Authorization" : "Token " + storedToken,
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify({
+            "profile_id" : user_id
+          })
+        });
+        const left_swipe = await send_left.json();
+        if(send_left.ok && send_left.status === 201){
+          console.log("left swipped")
+        }else{
+          console.log("went wrong");
+        }
+      }
+      catch(error){
+        console.log(error);
+      }
+    }else{
+      console.log("Pass")
+    }
+
     dispatch(Actions.users.swipe.request({ id: card.id, swipeType }));
   };
 

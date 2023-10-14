@@ -7,3 +7,4 @@ export { default as MainCard } from "./MainCard";
 export { default as FeedbackCard } from "./FeedbackCard";
 export { default as MatchActionBar } from "./MatchActionBar";
 export { default as RadioButtons } from "./RadioButtons";
+export { default as DateInput } from "./DateInput";

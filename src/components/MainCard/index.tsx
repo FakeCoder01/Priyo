@@ -25,11 +25,12 @@ import {
   ZoomOut,
 } from "react-native-reanimated";
 import { SceneName } from "~src/@types/SceneName";
+import { SERVER_URL } from "~constants";
 
 const springConfig = { mass: 0.2 };
 
 function VisitingCard({ user, shouldShowPersonalInfo = true, ...props }: any) {
-  const { pictures } = user;
+  // const pictures  = user.images;
   const [currentImage, setCurrentImage] = useState(0);
   const navigation = useNavigation();
 
@@ -49,7 +50,7 @@ function VisitingCard({ user, shouldShowPersonalInfo = true, ...props }: any) {
   };
 
   const gotoNextImage = () => {
-    if (currentImage + 1 < pictures.length) {
+    if (currentImage + 1 < user.images.length) {
       return setCurrentImage((index) => index + 1);
     }
     rotation.value = withSequence(
@@ -64,16 +65,17 @@ function VisitingCard({ user, shouldShowPersonalInfo = true, ...props }: any) {
     };
   });
 
+
   return (
     <Container {...props} style={[props.style, transform]}>
       <Picture
         entering={FadeIn}
         exiting={FadeOut}
-        source={{ uri: pictures[currentImage] }}
+        source={{ uri: SERVER_URL + user.images[currentImage] }}
       />
       <UpperPart>
         <Distance />
-        <Pagination pages={pictures.length} currentPage={currentImage} />
+        <Pagination pages={user.images.length} currentPage={currentImage} />
         <CarouselContainer>
           <PreviousImage onPress={gotoPreviousImage} />
           <NextImage onPress={gotoNextImage} />

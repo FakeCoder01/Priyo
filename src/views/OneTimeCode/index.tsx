@@ -20,9 +20,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SceneName } from "~src/@types/SceneName";
 import moment from "moment";
 import { ThemeContext } from "styled-components";
+import { Alert } from "react-native";
+import { useRoute } from "@react-navigation/native";
+import { SERVER_URL } from "~constants";
 
-const CODE_LENGTH = 4;
-const INITIAL_TIMEOUT_IN_SECONDS = 50;
+const CODE_LENGTH = 6;
+const INITIAL_TIMEOUT_IN_SECONDS = 300;
 const RESEND_TIMEOUT_IN_SECONDS = 50;
 
 const Authentication = () => {
@@ -30,6 +33,10 @@ const Authentication = () => {
   const themeContext = useContext(ThemeContext);
   const insets = useSafeAreaInsets();
   const [keyboardInput, setKeyboardInput] = useState("");
+  const [attempCount, setAttemptCount] = useState(0);
+  const route = useRoute();
+  const context = route.params;
+  const email = context['email'];
 
   const formattedTime = moment().minutes(0).seconds(timer).format("mm:ss");
 
@@ -37,12 +44,54 @@ const Authentication = () => {
 
   const insetTop = Math.max(15 + insets.top, 50);
 
-  useDidMountEffect(() => {
+  if (attempCount > 10) {
+    navigation.navigate(SceneName.Authentication);
+  }
+
+
+  useDidMountEffect( () => {
+
     if (keyboardInput.length === CODE_LENGTH) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: SceneName.EditProfile }],
+
+      setAttemptCount(attempCount + 1);
+      fetch(SERVER_URL + '/user/verify/', {
+        method: 'POST',
+        headers:{
+          'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify({
+          'email' : email,
+          'email_otp' : keyboardInput
+        }),
+      }).then(result => {
+
+        const status_code = result.status;
+
+        if (status_code === 200){
+          return result.json();
+        }else{
+          throw new Error('Verification Failed');
+        }
+
+      })
+      .then((data) => {
+        if (data.next === 'setup'){
+          Alert.alert('Email verified');
+
+          navigation.reset({
+            index: 0,
+            routes: [{ name: SceneName.EditProfile, params : {userType : 'new'} }],
+          });
+          // navigation.navigate(SceneName.EditProfile);
+        }
+        else{
+          Alert.alert(data.message);
+          return;
+        }
+      }).catch(error => {
+        console.log(error);
       });
+
     }
   }, [keyboardInput]);
 
@@ -60,7 +109,9 @@ const Authentication = () => {
         <TopColumn>
           <Timer>{formattedTime}</Timer>
           <Description>
-            Insira o código de verificação que te enviamos
+            A code has been sent to email <Text style={{fontWeight: '800'}}>
+              {email}
+            </Text>
           </Description>
           <CodeInput value={keyboardInput} length={CODE_LENGTH} />
         </TopColumn>
@@ -86,7 +137,7 @@ const Authentication = () => {
       >
         <Underline>
           <Text fontSize="large" fontWeight="bold">
-            Reenviar o código
+            Resend
           </Text>
         </Underline>
       </ResendCode>

@@ -7,6 +7,7 @@ export type RootStackParamList = {
   [SceneName.Profile]: undefined;
   [SceneName.Chat]: { user: User };
   [SceneName.Authentication]: undefined;
+  [SceneName.Register] : undefined;
   [SceneName.OneTimeCode]: undefined;
   [SceneName.UserProfile]: { user: User };
   [SceneName.Main]: NavigatorScreenParams<undefined>;

@@ -3,7 +3,8 @@ import Text from "~components/Text";
 
 export const Container = styled.View`
   padding: 25px;
-  padding-bottom: 50px;
+  padding-top: 15px;
+  padding-bottom: 40px;
 `;
 
 export const Name = styled(Text).attrs({

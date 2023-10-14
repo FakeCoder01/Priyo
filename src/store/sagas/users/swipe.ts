@@ -1,6 +1,7 @@
 import { put, takeLatest, select, all, fork } from "redux-saga/effects";
 import { Actions, Types } from "~store/reducers";
 import { ActionType } from "typesafe-actions";
+import { SERVER_URL } from "~constants";
 
 function* swipeUserRequest({
   payload,
@@ -14,7 +15,7 @@ function* swipeUserRequest({
 
     yield put(Actions.users.swipe.success({ id }));
   } catch (err) {
-    const error = { id, message: "Alguma coisa deu errada" };
+    const error = { id, message: "Something went wrong (-1)" };
     yield put(Actions.users.swipe.failure(error));
   }
 }
