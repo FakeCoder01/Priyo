@@ -233,7 +233,15 @@ const UserProfile = ({ route }) => {
               {firstName}
               <Age>, {user.age}</Age>
             </Name>
+            {
+              shouldShowData(user.city) && (
+                <Text style={{}}>
+                  {user.city}, {user.distance} km away
+                </Text>
+              )
+            }
             <Teasers profession={user.questions.profession} place={user.questions.place} />
+
             <Description style={{ marginTop: 2, marginBottom: 30 }}>
               {user.bio}
             </Description>
@@ -299,12 +307,15 @@ const UserProfile = ({ route }) => {
                   }
 
                   {
-                    shouldShowData(user.questions.smoking) && (
+                    shouldShowData(user.questions.smoking ? "Yes" : "No") && (
                       <Text style={detailsStyles.half}>
-                        Smoking : {user.questions.smoking ? "Yes" : "No"}
+                        Smoking : {user.questions.smoking ? "Yes" : "No" }
                       </Text>
                     )
                   }
+
+                  <View style={{marginVertical : 20, height : 3, backgroundColor : themeContext.colors.border, width : 360}}></View>
+
 
                   {
                     shouldShowData(user.questions.religion) && (
@@ -338,14 +349,7 @@ const UserProfile = ({ route }) => {
                     )
                   }
 
-                  {
-                    shouldShowData(user.city) && (
-                      <Text style={detailsStyles.half}>
-                        From : {user.city}
-                      </Text>
-                    )
-                  }
-
+                  <View style={{marginVertical : 20, height : 3, backgroundColor : themeContext.colors.border, width : 360}}></View>
 
                   {
                     shouldShowData(user.questions.fav_song) && (
