@@ -4,14 +4,14 @@ import Location from "~images/Location.svg";
 import { useContext } from "react";
 import { ThemeContext } from "styled-components/native";
 
-function Distance() {
+function Distance({distance}) {
   const themeContext = useContext(ThemeContext);
 
   return (
     <Container>
       <Content>
         <Location width={14} height={14} fill={themeContext.colors.text} />
-        <DistanceText>19km</DistanceText>
+        <DistanceText>{distance + 1}km</DistanceText>
       </Content>
     </Container>
   );

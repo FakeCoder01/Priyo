@@ -74,7 +74,7 @@ function VisitingCard({ user, shouldShowPersonalInfo = true, ...props }: any) {
         source={{ uri: SERVER_URL + user.images[currentImage] }}
       />
       <UpperPart>
-        <Distance />
+        <Distance distance={user.distance} />
         <Pagination pages={user.images.length} currentPage={currentImage} />
         <CarouselContainer>
           <PreviousImage onPress={gotoPreviousImage} />

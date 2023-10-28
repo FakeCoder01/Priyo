@@ -21,6 +21,8 @@ const ROTATION_DEG = 8;
 
 interface ISwipeHandler {
   card: any;
+  onMatch: (TrueOrFalse:boolean) => void;
+  onMatchCard : (match_card:any) => void;
 }
 
 export interface ISwipeHandlerRef {
@@ -30,10 +32,12 @@ export interface ISwipeHandlerRef {
 
 export const swipeHandlerRef = React.createRef<ISwipeHandlerRef>();
 
-const SwipeHandler: React.FC<ISwipeHandler> = ({ card }) => {
+const SwipeHandler: React.FC<ISwipeHandler> = ({ card, onMatch, onMatchCard }) => {
 
   const [token, setToken] = useState("");
+
   const dispatch = useDispatch();
+
   const currentCardId = useSelector(getCurrentCardId);
 
   const isFirstCard = card.id === currentCardId;
@@ -62,8 +66,9 @@ const SwipeHandler: React.FC<ISwipeHandler> = ({ card }) => {
           console.log("Right Swipped User")
         }
         else if(send_right.ok && send_right.status === 201){
-          // got a match
-          console.log(right_swipe.message)
+          onMatchCard(right_swipe);
+          onMatch(true);
+          console.log(right_swipe)
         }else{
           console.log("went wrong");
         }
@@ -85,16 +90,13 @@ const SwipeHandler: React.FC<ISwipeHandler> = ({ card }) => {
         });
         const left_swipe = await send_left.json();
         if(send_left.ok && send_left.status === 201){
-          console.log("left swipped")
         }else{
-          console.log("went wrong");
         }
       }
       catch(error){
         console.log(error);
       }
     }else{
-      console.log("Pass")
     }
 
     dispatch(Actions.users.swipe.request({ id: card.id, swipeType }));
@@ -137,12 +139,16 @@ const SwipeHandler: React.FC<ISwipeHandler> = ({ card }) => {
     };
   });
 
+
+
+
   return (
     <PanGestureHandler
       enabled={!!(isFirstCard && enabled)}
       onGestureEvent={gestureHandler}
     >
       <Animated.View style={[StyleSheet.absoluteFill, transform]}>
+        {/* <Match match={match} /> */}
         <FeedbackCard
           isFirst={isFirstCard}
           user={card}

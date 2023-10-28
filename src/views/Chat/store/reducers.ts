@@ -2,13 +2,16 @@ import produce from "immer";
 import { action, createReducer } from "typesafe-actions";
 import { FeedbackStatus } from "../components/Feedback";
 import moment from "moment";
+import { Message } from "../components";
 
 export interface Message {
-  _id: string;
+  message_id: string;
   message: string;
-  createdAt: string;
+  sent_at: string;
   status: FeedbackStatus;
-  self: boolean;
+  sender: string;
+  image : string;
+  self_sender : boolean;
 }
 
 export interface State {
@@ -16,18 +19,12 @@ export interface State {
   buffer: Message[];
 }
 
-const mockMessage = {
-  _id: "609c830794d0a801004bc667",
-  self: false,
-  message: "bom diaa",
-  createdAt: "2021-05-13T01:38:15.144Z",
-  status: FeedbackStatus.Success,
-};
+// export const INITIAL_STATE = (messages : Message[]) =>  {return ({messages: messages as Message[], buffer: []}) as State};
 
-export const INITIAL_STATE: State = {
-  messages: [mockMessage],
-  buffer: [],
-};
+export const INITIAL_STATE : State = {
+  messages: [],
+  buffer: []
+}
 
 export enum Types {
   SET_MESSAGES = "SET_MESSAGES",
@@ -38,20 +35,17 @@ export enum Types {
 }
 
 export const Creators = {
-  setMessages: ({ messages }: { messages: Message[] }) =>
-    action(Types.SET_MESSAGES, { messages }),
-  addMessage: ({ message }: { message: Message }) =>
-    action(Types.ADD_MESSAGE, { message }),
-  addTemp: ({ _id, body }: { _id: string; body: string }) =>
-    action(Types.ADD_TEMP, { _id, body }),
-  removeTemp: ({ _id }: { _id: string }) => action(Types.REMOVE_TEMP, { _id }),
-  errorTemp: ({ _id }: { _id: string }) => action(Types.ERROR_TEMP, { _id }),
+  setMessages: ({ messages }: { messages: Message[] }) => action(Types.SET_MESSAGES, { messages }),
+  addMessage: ({ message }: { message: Message }) => action(Types.ADD_MESSAGE, { message }),
+  addTemp: ({ message_id, body }: { message_id: string; body: string }) => action(Types.ADD_TEMP, { message_id, body }),
+  removeTemp: ({ message_id }: { message_id: string }) => action(Types.REMOVE_TEMP, { message_id }),
+  errorTemp: ({ message_id }: { message_id: string }) => action(Types.ERROR_TEMP, { message_id }),
 };
 
 const setMessages = (state = INITIAL_STATE, { payload: { messages } }) =>
   produce(state, (draft) => {
     if (!messages || messages.length === draft.messages?.length) return draft;
-    draft.messages = messages.reverse();
+    draft.messages = messages;
     return draft;
   });
 
@@ -61,30 +55,30 @@ const addMessage = (state = INITIAL_STATE, { payload: { message } }) =>
     return draft;
   });
 
-// Adding a fake message with current time
-const addTemp = (state = INITIAL_STATE, { payload: { _id, body } }) =>
+const addTemp = (state = INITIAL_STATE, { payload: { message_id, body } }) =>
   produce(state, (draft) => {
     draft.buffer.unshift({
-      _id,
+      message_id : message_id,
       message: body,
-      createdAt: moment().toISOString(),
-      self: true,
+      sent_at: moment().toISOString(),
       status: FeedbackStatus.Loading,
+      image: body,
+      self_sender: true,
     } as Message);
-
     return draft;
   });
 
-const removeTemp = (state = INITIAL_STATE, { payload: { _id } }) =>
+
+const removeTemp = (state = INITIAL_STATE, { payload: { message_id } }) =>
   produce(state, (draft) => {
-    const index = draft.buffer.findIndex((message) => message._id === _id);
+    const index = draft.buffer.findIndex((message) => message.message_id === message_id);
     draft.buffer.splice(index, 1);
     return draft;
   });
 
-const errorTemp = (state = INITIAL_STATE, { payload: { _id } }) =>
+const errorTemp = (state = INITIAL_STATE, { payload: { message_id } }) =>
   produce(state, (draft) => {
-    const index = draft.buffer.findIndex((message) => message._id === _id);
+    const index = draft.buffer.findIndex((message) => message.message_id === message_id);
     draft.buffer[index].status = FeedbackStatus.Error;
     return draft;
   });

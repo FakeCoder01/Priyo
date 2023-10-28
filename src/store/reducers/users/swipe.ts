@@ -10,7 +10,7 @@ export const initialState = {
     error: null,
   },
   config: {
-    limit: 3,
+    limit: 32,
     nextPage: 1,
     hasMore: true,
     lastCardId: null,

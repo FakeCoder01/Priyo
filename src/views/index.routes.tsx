@@ -27,6 +27,9 @@ import MessagesActive from "~images/MessagesActive.svg";
 import ProfileActive from "~images/UserActive.svg";
 import { Dimensions } from "react-native";
 import Register from "~views/Register";
+import InfoPage from "~views/InfoPage";
+import ResetPassword from "~views/ResetPassword";
+import InterestPage from "./InterestPage";
 
 const Tab = createMaterialTopTabNavigator<RootStackParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
@@ -107,15 +110,31 @@ function Router() {
           component={EditProfile}
         />
         <Stack.Screen name={SceneName.Chat} component={Chat} />
+        <Stack.Screen 
+          name={SceneName.InfoPage} 
+          options={{
+            headerTitle: "Profile Information",
+            headerShown: true,
+            headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
+          }}
+          component={InfoPage}
+        />
+        <Stack.Screen 
+          name={SceneName.InterestPage} 
+          options={{
+            headerTitle: "Interests",
+            headerShown: true,
+            headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
+          }}
+          component={InterestPage}
+        />
       </Stack.Group>
       <Stack.Group>
-        <Stack.Screen
-          name={SceneName.Authentication}
-          component={Authentication}
-        />
+        <Stack.Screen name={SceneName.Authentication} component={Authentication} />
+        <Stack.Screen name={SceneName.ResetPassword} component={ResetPassword} />
         <Stack.Screen name={SceneName.OneTimeCode} component={OneTimeCode} />
+        <Stack.Screen name={SceneName.Register} component={Register} />
       </Stack.Group>
-      <Stack.Screen name={SceneName.Register} component={Register} />
     </Stack.Navigator>
   );
 }

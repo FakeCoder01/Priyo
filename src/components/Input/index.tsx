@@ -15,7 +15,7 @@ const Input: React.FC<SearchProps> = ({ title, ...props }) => {
       </Text>
       <Content>
         <TextInput {...props} />
-        {!!props.value && (
+        {(!!props.value && props.showClearIcon !== false )&& (
           <CancelTouchArea onPress={() => props.onChangeText("")}>
             <CancelIcon />
           </CancelTouchArea>

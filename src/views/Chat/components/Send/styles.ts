@@ -12,7 +12,7 @@ export const Input = styled.TextInput.attrs({
 })`
   color: ${(props) => props.theme.colors.text};
   font-family: ${(props) => props.theme.typography.fontFamily.regular};
-
+  overflow: scroll;
   font-size: ${(props) => props.theme.typography.sizes.regular.size}px;
   line-height: ${(props) => props.theme.typography.sizes.regular.lineHeight}px;
 `;

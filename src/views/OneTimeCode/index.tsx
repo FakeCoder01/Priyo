@@ -25,7 +25,7 @@ import { useRoute } from "@react-navigation/native";
 import { SERVER_URL } from "~constants";
 
 const CODE_LENGTH = 6;
-const INITIAL_TIMEOUT_IN_SECONDS = 300;
+const INITIAL_TIMEOUT_IN_SECONDS = 90;
 const RESEND_TIMEOUT_IN_SECONDS = 50;
 
 const Authentication = () => {
@@ -46,6 +46,21 @@ const Authentication = () => {
 
   if (attempCount > 10) {
     navigation.navigate(SceneName.Authentication);
+  }
+
+  const handleResendOTP = async () => {
+    const resend_otp = await fetch(SERVER_URL + "/user/verify/send/", {
+      method : 'POST',
+      headers : {
+        "Content-Type" : "application/json"
+      },
+      body : JSON.stringify({
+        "email" : email
+      })
+    });
+    const otp_res = await resend_otp.json();
+    console.log(otp_res);
+    setAttemptCount(attempCount + 1);
   }
 
 
@@ -70,7 +85,9 @@ const Authentication = () => {
         if (status_code === 200){
           return result.json();
         }else{
+          Alert.alert("Wrong Code")
           throw new Error('Verification Failed');
+          
         }
 
       })
@@ -85,7 +102,7 @@ const Authentication = () => {
           // navigation.navigate(SceneName.EditProfile);
         }
         else{
-          Alert.alert(data.message);
+          
           return;
         }
       }).catch(error => {
@@ -131,15 +148,16 @@ const Authentication = () => {
         style={{ bottom: insets.bottom + 15 }}
         disabled={!!timer}
         onPress={() => {
+          handleResendOTP();
           setTimer(RESEND_TIMEOUT_IN_SECONDS);
           setKeyboardInput("");
         }}
       >
-        <Underline>
+        {/* <Underline> */}
           <Text fontSize="large" fontWeight="bold">
             Resend
           </Text>
-        </Underline>
+        {/* </Underline> */}
       </ResendCode>
     </Container>
   );

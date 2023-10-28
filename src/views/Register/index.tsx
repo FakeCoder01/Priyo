@@ -2,21 +2,18 @@ import React, { useState, useContext } from "react";
 import { BottomCard, Container, Description, TopCard } from "./styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Button } from "~components";
+import { Button, Text } from "~components";
 import { Title, Highlight } from "./styles";
 import Logo from "~images/Logo.svg";
 import HeroText from "./components/HeroText";
 import EmailInput from "./components/EmailInput";
 import PasswordInput from "./components/PasswordInput";
-import { KeyboardAvoidingView, Platform } from "react-native";
+import { KeyboardAvoidingView, Platform, Alert, Pressable  } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ThemeContext } from "styled-components/native";
 import { SceneName } from "~src/@types/SceneName";
-import { Text } from "react-native";
-import { Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Pressable } from "react-native";
 import { SERVER_URL } from "~constants";
 
 export const useCustomBottomInset = () => {
@@ -103,11 +100,12 @@ const Register = () => {
           <Title>
             Create an <Highlight>Account</Highlight>
           </Title>
-          <Description>
-            Already have an account? 
+          <Description style={{marginTop: 2}}>
+            
+            Already have an account?&nbsp;
 
             <Pressable onPress={() => navigation.navigate(SceneName.Authentication)} >
-              <Text style={{ fontWeight: '900', color: '#2ceae1', textDecorationLine: 'underline'}}>
+              <Text fontSize="large" fontWeight="extraBold" style={{color: '#2ceae1', textDecorationLine: 'underline'}}>
                 Log in
               </Text>
             </Pressable>
@@ -139,7 +137,7 @@ phind.co*/}
           <PasswordInput
             secureTextEntry={true}
             blurOnSubmit={false}
-            placeholder="Password"
+            placeholder="Retype Password"
             setPassword={setConfirmPassword}
           />
 

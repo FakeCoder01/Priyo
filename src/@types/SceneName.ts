@@ -9,4 +9,7 @@ export enum SceneName {
   Profile = "Profile",
   Main = "Main",
   Register = "Register",
+  InfoPage = "InfoPage",
+  ResetPassword = "ResetPassword",
+  InterestPage = "InterestPage",
 }

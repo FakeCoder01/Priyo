@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { ThemeContext } from "styled-components/native";
 import {
@@ -11,7 +11,7 @@ import {
   ReportButton,
 } from "./styles";
 import MainCard from "~components/MainCard";
-import { Platform, View, Text, Image, Alert  } from "react-native";
+import { Platform, View, Text, Image, Alert, FlatList, StyleSheet  } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MatchActionBar from "~components/MatchActionBar";
@@ -30,10 +30,14 @@ import { getCurrentCardId } from "~store/selectors";
 import { Actions } from "~store/reducers";
 import GoBack from "./components/GoBack";
 import { Text as TextC } from "~components";
+import { SERVER_URL } from "~constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import HeartRightSwipe from "~components/MatchActionBar/assets/HeartRightSwipe";
 
 enum TeaserTypes {
-  School = "school",
-  Job = "job",
+  School = "Student",
+  Job = "Job",
 }
 
 const Icons = {
@@ -57,36 +61,37 @@ const useSwipeHandler = (user: any) => {
   };
 };
 
-const Teasers = ({ teasers }) => {
+const Teasers = ({ profession, place }) => {
   const themeContext = useContext(ThemeContext);
 
-  if (!teasers?.[0]) return null;
+  if (!profession || !place) return null;
 
+  const TeaserIcon = Icons[profession];
   return (
     <View style={{ marginVertical: 10 }}>
-      {teasers.map((teaser) => {
-        const TeaserIcon = Icons[teaser.type];
-        return (
           <View
-            key={`${teaser.type}-${teaser.string}`}
+            key={`${profession}-${profession}`}
             style={{ flexDirection: "row", alignItems: "center" }}
           >
             <TeaserIcon
-              fill={themeContext.colors.text}
-              width={22}
-              height={22}
-              style={{ marginRight: 5 }}
+              width={30}
+              height={30}
+              fill={themeContext.colors.primary}
+              style={{ marginRight: 5}}
             />
-            <TextC fontSize="small">{teaser.string}</TextC>
+            <TextC style={{color:"gray"}} fontSize="regular" fontWeight="semiBold">
+            { profession === "Student" ? "Studies" : "Works"} at {place}</TextC>
           </View>
-        );
-      })}
     </View>
+
   );
 };
 
 const UserProfile = ({ route }) => {
   const { user } = route.params;
+ 
+
+  const styles = "";
 
   const swipeHandler = useSwipeHandler(user);
 
@@ -98,18 +103,107 @@ const UserProfile = ({ route }) => {
 
   const MatchActionBarHeight = bottomInset + 100;
   const firstName = user.name.split(" ")[0];
-  const [reportReason, setReportReason] = useState('')
-  const handleReport = (id) => {
-    console.log(id);
+
+
+  const blockOrReportUser = async (type:string, id:string) => {
+    const is_reported = type === 'report' ? true : false;
+    const is_blocked = true;
+    const reason = "";
+    const token = await AsyncStorage.getItem('token');
+    const own_user_id = await AsyncStorage.getItem('profile_id');
+
+    const report_and_block = await fetch(SERVER_URL + "/api/report/profile/", {
+      method : "POST",
+      headers : {
+        "Authorization" : "Token " + token,
+        "Content-Type" : "application/json"
+      },
+      body : JSON.stringify({
+        "reported" : id,
+        "reporter" : own_user_id,
+        "is_reported" : is_reported,
+        "is_blocked" : is_blocked,
+        "reason" : reason
+      })
+    });
+    const response = await report_and_block.json();
+
+    if (report_and_block.ok && report_and_block.status === 201) {
+      Alert.alert(firstName + " has been blocked", "You will not see him/her anymore");
+    }else{
+      Alert.alert("Something went wrong")
+    }
     
-    Alert.prompt(
-      'Report user',
-      'Enter reason and we will look',
-      (text) => setReportReason(text),
-      'plain-text',
-      reportReason
+
+  }
+
+  const handleReport = (id:string) => {
+
+    Alert.alert("Do you want to block or report " + firstName + "?\n", 
+      "We may see your chat with " + firstName + " in case you report",
+      [
+        {
+            text: 'No',
+            onPress: () => {return;},
+            style: 'cancel',
+        },
+        {
+          text: 'Block', 
+          onPress: () => blockOrReportUser('block', id)
+        },
+        {
+          text: 'Report', 
+          onPress: () => blockOrReportUser('report', id)
+        }
+      ]
     );
   };
+
+  function shouldShowData(val, is_private=false) {
+    if(val == undefined || val == null || val == "" || is_private) return false;
+    return true;
+  }
+
+  const detailsStyles = StyleSheet.create({
+    "full" : {
+      borderWidth : 0.2,
+      borderColor : themeContext.colors.primary,
+      fontWeight : '400',
+      color : 'black',
+      maxWidth : 362,
+      minWidth : 362,
+      width : 362,
+      height : 60,
+      borderRadius : 5,
+      fontSize : 18,
+      backgroundColor : '#d5ceea',
+      flexDirection : 'row',
+      marginVertical : 4,
+      flexWrap : 'wrap',
+      paddingLeft : 8,
+      verticalAlign : 'middle',
+    },
+    "half" : {
+      fontStyle : 'italic',
+      borderWidth : 0.3,
+      borderColor : themeContext.colors.primary,
+      fontWeight : '700',
+      color : 'white',
+      maxWidth : 175,
+      minWidth : 175,
+      width : 175,
+      height : 60,
+      borderRadius : 5,
+      fontSize : 18,
+      backgroundColor : '#e5b664',
+      flexDirection : 'row',
+      margin : 4,
+      flexWrap : 'wrap',
+      textAlign : 'center',
+      verticalAlign : 'middle',
+    },
+  });
+
 
   return (
     <>
@@ -136,21 +230,141 @@ const UserProfile = ({ route }) => {
         <BottomColumn style={{ paddingBottom: MatchActionBarHeight }}>
           <Content>
             <Name numberOfLines={1}>
-              {user.name}
+              {firstName}
               <Age>, {user.age}</Age>
             </Name>
-            <Teasers teasers={user.teasers} />
-            <Description style={{ marginTop: 10, marginBottom: 10 }}>
+            <Teasers profession={user.questions.profession} place={user.questions.place} />
+            <Description style={{ marginTop: 2, marginBottom: 30 }}>
               {user.bio}
             </Description>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
+            <View style={{flexDirection : "row", marginBottom : 4}}>
+                <HeartRightSwipe width={25} height={25} fill={"black"} 
+                  style={{marginRight : 6, fontWeight : "800"}}
+                />
+                <TextC fontSize="large" fontWeight="extraBold">Interests</TextC>
+              </View>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 12 }}>
               {user.tag_names.map((tag) => (
-                <View key={tag.id} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6, marginBottom: 4, backgroundColor: '#fb167ce8', paddingTop: 3,
-                    paddingBottom: 3, paddingLeft: 6, paddingRight: 6, borderRadius: 20}}>
-                  <Image source={{ uri: tag.icon }} style={{ width: 20, height: 20, marginRight: 3 }} />
+                <View key={tag.id} style={{ 
+                  flexDirection: 'row',
+                  flexWrap : 'wrap',
+                  borderRadius : 50,
+                  paddingVertical : 6,
+                  paddingLeft : 6,
+                  paddingRight : 10,
+                  alignItems : 'center',
+                  marginRight : 3,
+                  marginVertical : 6,
+                  backgroundColor: themeContext.colors.primary
+                }}>
+                  <Image source={{ uri: tag.icon }} style={{ 
+                    width: 25, height: 25,  marginRight: 5, borderRadius : 50
+                  }} />
                   <Text style={{color: 'white'}}>{tag.name}</Text>
                 </View>
               ))}
+            </View>
+            <View style={{ marginTop : 20, marginBottom : 10}}>
+              <View style={{flexDirection : "row", marginBottom : 14}}>
+                <HeartRightSwipe width={25} height={25} fill={"black"} 
+                  style={{marginRight : 6, fontWeight : "800"}}
+                />
+                <TextC fontSize="large" fontWeight="extraBold">About</TextC>
+              </View>
+              <View style={{flexDirection : 'row', flexWrap : 'wrap', padding : 0, marginHorizontal : -7, alignItems : 'center'}}>
+                {/* Put profile details here */}
+
+                  {
+                    shouldShowData(user.gender) && (
+                      <Text style={detailsStyles.half}>
+                        Gender : {user.gender}
+                      </Text>
+                    )
+                  }
+                  
+                  {
+                    shouldShowData(user.here_for) && (
+                      <Text style={detailsStyles.half}>
+                        Looking for : {user.here_for}
+                      </Text>
+                    )
+                  }
+
+                  {
+                    shouldShowData(user.questions.drinking) && (
+                      <Text style={detailsStyles.half}>
+                        Drinking : {user.questions.drinking}
+                      </Text>
+                    )
+                  }
+
+                  {
+                    shouldShowData(user.questions.smoking) && (
+                      <Text style={detailsStyles.half}>
+                        Smoking : {user.questions.smoking ? "Yes" : "No"}
+                      </Text>
+                    )
+                  }
+
+                  {
+                    shouldShowData(user.questions.religion) && (
+                      <Text style={detailsStyles.half}>
+                        Religion : {user.questions.religion}
+                      </Text>
+                    )
+                  }
+
+                  {
+                    shouldShowData(user.questions.zodiac_sign) && (
+                      <Text style={detailsStyles.half}>
+                        Zodiac : {user.questions.zodiac_sign}
+                      </Text>
+                    )
+                  }
+
+                  {
+                    shouldShowData(user.questions.body_type) && (
+                      <Text style={detailsStyles.half}>
+                        Shape : {user.questions.body_type}
+                      </Text>
+                    )
+                  }
+
+                  {
+                    shouldShowData(user.questions.height) && (
+                      <Text style={detailsStyles.half}>
+                        Height : {user.questions.height} cm
+                      </Text>
+                    )
+                  }
+
+                  {
+                    shouldShowData(user.city) && (
+                      <Text style={detailsStyles.half}>
+                        From : {user.city}
+                      </Text>
+                    )
+                  }
+
+
+                  {
+                    shouldShowData(user.questions.fav_song) && (
+                      <Text style={detailsStyles.full}>
+                        Song : {user.questions.fav_song}
+                      </Text>
+                    )
+                  }
+                  
+                  {
+                    shouldShowData(user.questions.languages) && (
+                      <Text style={detailsStyles.full}>
+                        Speaks : {user.questions.languages}
+                      </Text>
+                    )
+                  }
+
+              </View>
+
             </View>
             <ShareButton>
               <Description

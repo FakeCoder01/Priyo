@@ -16,8 +16,8 @@ export const BackTouchArea = styled.TouchableOpacity`
 `;
 
 export const Picture = styled.Image`
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
   border-radius: 50px;
   margin-right: 14px;
 `;

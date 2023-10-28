@@ -2,20 +2,17 @@ import React, { useState, useContext, useEffect } from "react";
 import { BottomCard, Container, Description, TopCard } from "./styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Button } from "~components";
+import { Button, Text } from "~components";
 import { Title, Highlight } from "./styles";
 import Logo from "~images/Logo.svg";
 import HeroText from "./components/HeroText";
 import EmailInput from "./components/EmailInput";
 import PasswordInput from "./components/PasswordInput";
-import { KeyboardAvoidingView, Platform } from "react-native";
+import { KeyboardAvoidingView, Platform, Alert, Pressable, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ThemeContext } from "styled-components/native";
 import { SceneName } from "~src/@types/SceneName";
-import { Text } from "react-native";
-import { Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Pressable } from "react-native";
 import { SERVER_URL } from "~constants";
 
 export const useCustomBottomInset = () => {
@@ -25,14 +22,28 @@ export const useCustomBottomInset = () => {
 
 const Authentication = () => {
 
+  const [loadingScreen, setLoadingScreen] = useState(true);
+
   useEffect(() => {
     const checkUserAlreadyLogged = async () => {
       const auth_token = await AsyncStorage.getItem('token');
       if (auth_token !== null && auth_token !== undefined && auth_token !== ''){
-        navigation.navigate(SceneName.Main);
+        const user_login = await fetch(SERVER_URL + '/user/login/validation/', {
+          method : "GET",
+          headers : {
+            "Authorization" : "Token " + auth_token,
+            "Content-Type" : "application/json"
+          }
+        });
+        const user_response = await user_login.json();
+        if(user_login.ok && user_login.status === 200){
+          await AsyncStorage.setItem('profile_id', user_response.profile_id);
+          navigation.navigate(SceneName.Main);
+        }
       }
     };
     checkUserAlreadyLogged();
+    setLoadingScreen(false);
   }, []);
 
   const insets = useSafeAreaInsets();
@@ -75,12 +86,14 @@ const Authentication = () => {
       Alert.alert("Wrong email or password")
       setLoading(false);
     }
-  };
 
+    setLoading(false);
+  };
 
 
   return ( 
     <Container>
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : null}
         style={{ flexGrow: 1 }}
@@ -89,27 +102,30 @@ const Authentication = () => {
         <TopCard
           source={
             themeContext.dark
-              ? require("~images/background-dark.png")
-              : require("~images/background-light.png")
+            ? require("~images/background-dark.png")
+            : require("~images/background-light.png")
           }
           style={{ paddingTop: 60 + insets.top }}
         >
+          
           <Logo
             style={{ marginBottom: 25 }}
             width={70}
             height={70}
-            fill={themeContext.colors.text}
+            fill={"#e088da"}
           />
-          <HeroText />
+        <HeroText />
+
         </TopCard>
+        { loadingScreen && <ActivityIndicator size={60} color={"#2ceae1"} />}
         <BottomCard style={{ paddingBottom: bottomInset }}>
           <Title>
             Login to your <Highlight>Account</Highlight>
           </Title>
-          <Description>
-            Don't have an account? 
+          <Description  style={{paddingTop: 4}}>
+            Don't have an account?&nbsp;
             <Pressable onPress={() => navigation.navigate(SceneName.Register)}>
-              <Text style={{ fontWeight: '900', color: '#2ceae1', textDecorationLine: 'underline'}}>
+              <Text fontSize="large" fontWeight="extraBold" style={{color: '#2ceae1', textDecorationLine: 'underline'}}>
                 Sign up
               </Text>
             </Pressable>
@@ -126,6 +142,12 @@ const Authentication = () => {
             placeholder="Password"
             setPassword={setPassword}
           />
+
+            <Pressable onPress={() => navigation.navigate(SceneName.ResetPassword)}  style={{marginBottom: 10, marginTop: -15, alignSelf : 'flex-end'}} >
+              <Text fontSize="large" fontWeight="extraBold" style={{ color: '#d45b90'}}>
+                &nbsp;forgot password
+              </Text>
+            </Pressable>
 
 
           <Button loading={loading} onPress={handleLogin}>

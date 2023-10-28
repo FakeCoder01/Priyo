@@ -1,4 +1,4 @@
-import { call, put, takeLatest, select, delay } from "redux-saga/effects";
+import { call, put, takeLatest, select } from "redux-saga/effects";
 import { Actions, Types } from "~store/reducers";
 import api from "~services/api";
 import AsyncStorage from '@react-native-async-storage/async-storage';

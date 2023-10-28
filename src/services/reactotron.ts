@@ -4,7 +4,7 @@ import sagaPlugin from "reactotron-redux-saga";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const reactotron = Reactotron.configure({
-  name: "Pegava",
+  name: "Priyo",
 })
   .setAsyncStorageHandler(AsyncStorage)
   .useReactNative()

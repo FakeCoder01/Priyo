@@ -1,6 +1,5 @@
 export interface User {
-  id: string;
+  profile_id: string;
   picture: string;
   name: string;
-  lastMessage?: string;
 }

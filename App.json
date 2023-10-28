@@ -1,10 +1,10 @@
 {
-  "displayName": "Pegava",
+  "displayName": "Priyo",
   "expo": {
-    "name": "Pegava",
-    "description": "Aplicativo de relacionamento",
-    "scheme": "pegava",
-    "slug": "pegava",
+    "name": "Priyo",
+    "description": "New way to find love",
+    "scheme": "priyo",
+    "slug": "priyo",
     "icon": "./src/assets/images/icon.png",
     "orientation": "portrait",
     "platforms": ["ios", "android"],
@@ -25,7 +25,7 @@
       "adaptiveIcon": {
         "backgroundColor": "#111D40"
       },
-      "package": "br.com.pegava"
+      "package": "ru.com.priyo"
     },
     "packagerOpts": {
       "config": "metro.config.js",

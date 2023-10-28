@@ -1,7 +1,6 @@
 import { put, takeLatest, select, all, fork } from "redux-saga/effects";
 import { Actions, Types } from "~store/reducers";
 import { ActionType } from "typesafe-actions";
-import { SERVER_URL } from "~constants";
 
 function* swipeUserRequest({
   payload,

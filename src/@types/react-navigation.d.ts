@@ -12,6 +12,9 @@ export type RootStackParamList = {
   [SceneName.UserProfile]: { user: User };
   [SceneName.Main]: NavigatorScreenParams<undefined>;
   [SceneName.EditProfile]: undefined;
+  [SceneName.InfoPage]: undefined;
+  [SceneName.ResetPassword]: undefined;
+  [SceneName.InterestPage]: undefined
 };
 
 declare global {

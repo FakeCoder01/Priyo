@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { Alert, KeyboardAvoidingView, Platform, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, View, Pressable } from "react-native";
 import { ThemeContext } from "styled-components/native";
 import {
   AddRemoveContainer,
@@ -29,9 +29,11 @@ import Animated, {
 } from "react-native-reanimated";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import { SERVER_URL, width } from "~constants";
+import { SERVER_URL } from "~constants";
 import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
+import Text from"~components/Text";
+import DatePicker from "./components/DatePicker";
+
 
 
 const AddUserPhoto = ({ picture, onDelete, onAdd }) => {
@@ -66,6 +68,78 @@ const AddUserPhoto = ({ picture, onDelete, onAdd }) => {
   );
 };
 
+const AddProfilePhoto = (profile_pic) => {
+  const themeContext = useContext(ThemeContext);
+  const [fatBoy, setFatBoy] = useState(profile_pic.profile_pic);
+  const hasPicture = !! profile_pic.profile_pic;
+
+
+  const style = useAnimatedStyle(() => {
+    const rotation = withSpring(`0deg`);
+    return { transform: [{ rotateZ: rotation }] };
+  });
+
+  return (
+    <UserPictureContainer>
+      <UserPictureContent
+        style={{borderColor: 'orange', borderWidth: 3}}
+        key={profile_pic.profile_pic}
+        {...(profile_pic.profile_pic && { source: { uri: fatBoy == '' ? (profile_pic.profile_pic) : fatBoy } })}
+      >
+        {!hasPicture && <Placeholder/>}
+      </UserPictureContent>
+      <AddRemoveContainer
+        inverted={hasPicture}
+        onPress={async () => {
+
+          const profileImageResult = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1,
+            base64: false,
+          });
+          if(!profileImageResult.canceled){
+            const profilePicData = new FormData();
+
+            profilePicData.append('profile_pic', {
+              uri : profileImageResult.assets[0].uri,
+              name: 'dp_.jpg',
+              type: 'image/jpeg'
+            } as any);
+
+            const profile_pic_req = await fetch(SERVER_URL + "/user/image/dp/", {
+              method: "POST",
+              headers: {
+                "Authorization" : "Token " + (await AsyncStorage.getItem('token')).toString(),
+                "Content-Type" : "multipart/form-data"
+              },
+              body: profilePicData 
+            });
+            const profile_pic_response = await profile_pic_req.json();
+
+            if(profile_pic_req.ok && profile_pic_req.status === 200){
+              setFatBoy(SERVER_URL + profile_pic_response.profile_pic);
+            }else{
+              console.log("profile_photo upload failed")
+            }
+          }else{
+            console.log("no image");
+          }
+          
+        }}
+        style={{backgroundColor: 'violet', borderColor: 'yellow', borderWidth: 3}}
+      >
+        <Animated.View style={style}>
+          <AddRemove
+            fill={hasPicture ? 'white' : "white"}
+          />
+        </Animated.View>
+      </AddRemoveContainer>
+    </UserPictureContainer>
+  );
+};
+
+
 export interface Positions {
   [id: string]: number;
 }
@@ -86,6 +160,7 @@ const EditProfile = ({ route }) => {
 
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
+  const [city, setCity] = useState('');
 
 
   const handleLocation = async () => {
@@ -112,7 +187,7 @@ const EditProfile = ({ route }) => {
       body: JSON.stringify({
         "lat": lat,
         "lng": lng,
-        "city": null,
+        "city": city,
         "address": null,
         "country": "Russia",
       }),
@@ -178,7 +253,6 @@ const EditProfile = ({ route }) => {
     }
   };
 
-
   useEffect(() => {
     try {
       const context = route.params;
@@ -188,9 +262,9 @@ const EditProfile = ({ route }) => {
     setAuthToken();
   }, []);
 
-
   useEffect(() => {
     const fetchUserData = async () => {
+      setContinueButtonDisabled(true);
       const response = await fetch(SERVER_URL + '/user/profile/', {
         method: 'GET',
         headers: {
@@ -200,21 +274,24 @@ const EditProfile = ({ route }) => {
       });
       const profile = await response.json();
       if (response.ok && response.status === 200) {
-
         setName(profile.name);
         setBio(profile.bio);
         setGender(profile.gender);
         setDateOfBirth(profile.date_of_birth);
         setProfilePic(profile.profile_pic);
+        setContinueButtonDisabled(false);
+        setCity(profile.city);
         return true;
       }
       else {
         console.log("Couldn't load profile details");
+        setContinueButtonDisabled(false);
         return false;
       }
 
     };
     const fetchUserPreference = async () => {
+      setContinueButtonDisabled(true);
       const preference_req = await fetch( SERVER_URL + '/user/preference/', {
         method: 'GET',
         headers: {
@@ -225,15 +302,18 @@ const EditProfile = ({ route }) => {
       const preference = await preference_req.json();
       if (preference_req.ok && preference_req.status === 200) {
         setGenderOfInterest(preference.gender_preference);
+        setContinueButtonDisabled(false);
         return true;
       } else {
         console.log("Couldn't load preferences");
+        setContinueButtonDisabled(false);
         return false;
       }
 
     };
 
     const fetchUserImages =async () => {
+      setContinueButtonDisabled(true);
       const get_images = await fetch(SERVER_URL + '/user/image/', {
         method: 'GET',
         headers: {
@@ -243,7 +323,7 @@ const EditProfile = ({ route }) => {
       });
       const all_images = await get_images.json();
       if (get_images.ok && get_images.status === 200) {
-        while(all_images.length < 5){
+        while(all_images.length < 6){
           all_images.push({ 
             key: 'tmp_' + all_images.length + 1, 
             url: '',
@@ -252,10 +332,12 @@ const EditProfile = ({ route }) => {
           });
         }
         setPics(all_images);
+        setContinueButtonDisabled(false);
         return true;
       }
       else {
         console.log("Couldn't load images");
+        setContinueButtonDisabled(false);
         return false;
       }
     }
@@ -269,6 +351,10 @@ const EditProfile = ({ route }) => {
   // will be undesirable
   const [gesturesEnabled, setgesturesEnabled] = useState(true);
 
+
+  const [showDateModal, setShowDateModal] = useState(false);
+
+
   const headerHeight = useHeaderHeight();
   const navbarHeight = useNavbarStyle().height;
 
@@ -281,9 +367,11 @@ const EditProfile = ({ route }) => {
   const handleProfile = async () => {
     setContinueButtonDisabled(true);
     if (!handleLocation()) {
+      setContinueButtonDisabled(false);
       return;
     }
     if (!handlePreference()) {
+      setContinueButtonDisabled(false);
       return;
     }
     const age = calculateAge(dateOfBirth);
@@ -304,14 +392,18 @@ const EditProfile = ({ route }) => {
     });
     const result = await request.json();
     if (request.ok && request.status === 200) {
+      setContinueButtonDisabled(false);
       setName(result.name);
       setBio(result.bio);
       setGender(result.gender);
       setDateOfBirth(result.date_of_birth);
+      setProfilePic(result.profile_pic);
+      
+      Alert.alert("Updated");
 
-      // if(userType === 'new') {
-      //   navigation.navigate(SceneName.AccountPage as any, {userType : userType})
-      // }
+      if(userType === 'new') {
+        navigation.navigate(SceneName.InfoPage)
+      }
 
       setContinueButtonDisabled(false);
     } else {
@@ -321,8 +413,8 @@ const EditProfile = ({ route }) => {
     }
   };
 
-
   const handleDeletePhoto = async (picture) => {
+    setContinueButtonDisabled(true);
     const deleteResponse = await fetch(SERVER_URL + `/user/image/${picture.key}/delete/`, {
       method: 'DELETE',
       headers: {
@@ -353,20 +445,12 @@ const EditProfile = ({ route }) => {
     } else {
       console.log("Failed to delete photo");
     }
-  };
-  const requestCameraRollPermission = async () => {
-    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-    if (status !== 'granted') {
-      Alert.alert('Permission denied!');
-    }
+    setContinueButtonDisabled(false);
   };
 
   const handleUploadPhoto = async (picture) => {
-    const media_perm = await Permissions.getAsync(Permissions.MEDIA_LIBRARY);
-    if (!media_perm.granted) {
-      await requestCameraRollPermission();
-    }
-
+ 
+    setContinueButtonDisabled(true);
     const ImageResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -380,7 +464,7 @@ const EditProfile = ({ route }) => {
         uri: ImageResult.assets[0].uri,
         name: 'p_.jpg',
         type: 'image/jpeg',
-      });
+      } as any);
 
       const uploadResponse = await fetch(SERVER_URL + '/user/image/pic/', {
         method: 'POST',
@@ -414,15 +498,20 @@ const EditProfile = ({ route }) => {
 
         newPics.sort((a, b) => b.url.localeCompare(a.url));
         setPics(newPics);
+        setContinueButtonDisabled(false);
       }else{
         console.log("Failed to upload photo");
+        setContinueButtonDisabled(false);
         return;
       }
     }else{
+      setContinueButtonDisabled(false);
       return;
     }
-
+    setContinueButtonDisabled(false);
   };
+
+
 
   return (
     <>
@@ -433,8 +522,7 @@ const EditProfile = ({ route }) => {
         }
         behavior={Platform.OS === "ios" ? "padding" : null}
       >
-        <Container
-          style={{ flex: 1 }}
+        <Container style={{ flex: 1 }}
           contentContainerStyle={{ padding: 15, paddingBottom: 30 }}
           scrollEnabled={gesturesEnabled}
         >
@@ -442,16 +530,19 @@ const EditProfile = ({ route }) => {
 
           <DraggableGrid
             numColumns={numOfColumns}
-            renderItem={(picture, index) => (
-              <View>
+            renderItem = {(picture, index) => {
+              return ( index === 5 ? (
+                <AddProfilePhoto profile_pic={profilePic}/>
+              ) : (
                 <AddUserPhoto
-                  onDelete={() => handleDeletePhoto(picture)}
-                  onAdd={() => handleUploadPhoto(picture)}
-                  picture={picture}
-                />
-              </View>
-              
-            )}
+                    onDelete={() => handleDeletePhoto(picture)}
+                    onAdd={() => handleUploadPhoto(picture)}
+                    picture={picture}
+                  />
+                )
+              )
+            }}
+
             data={pics}
             itemHeight={userPictureHeight}
             style={{ zIndex: 10 }}
@@ -469,6 +560,7 @@ const EditProfile = ({ route }) => {
             onChangeText={setName}
             maxLength={50}
           />
+
           <Input
             title="About you"
             placeholder="Computer geek with passion for love"
@@ -477,13 +569,33 @@ const EditProfile = ({ route }) => {
             maxLength={500}
             multiline
           />
+
+          <Pressable onPress={() => navigation.navigate(SceneName.InterestPage)}
+            style={{ marginTop: 10,  marginBottom : -20,alignItems : 'flex-end'}}
+          >   
+            <Text fontWeight="extraBold" fontSize="large" color="primary"
+              style={{borderBottomColor : 'yellow', borderBottomWidth : 2}}
+            >Set your interests</Text>
+          </Pressable>
+
           <Input
+            onTouchStart={() => setShowDateModal(true)}
             keyboardType="numeric"
             title="Your birthday"
             placeholder="yyyy-mm-dd"
             value={dateOfBirth}
-            onChangeText={setDateOfBirth}
+            showClearIcon={false}
+            onChangeText={(v) => setDateOfBirth(v)}
           />
+      
+          <DatePicker
+            DOB={dateOfBirth != null && dateOfBirth != undefined && dateOfBirth != '' ? dateOfBirth : '2005-10-30'}
+            showDateModal={showDateModal}
+            setShowDateModal={setShowDateModal}
+            setDOBDate={setDateOfBirth}
+          />         
+
+
           <RadioButtons
             title="Your gender"
             data={["Man", "Woman"]}
@@ -496,15 +608,31 @@ const EditProfile = ({ route }) => {
             value={genderOfInterest}
             onChange={setGenderOfInterest}
           />
+
+          <Input
+            keyboardType="default"
+            title="Your city"
+            placeholder="eg. Moscow"
+            value={city}
+            onChangeText={setCity}
+          />
+
+            <Pressable onPress={()=>{navigation.navigate(SceneName.InfoPage as any);}}
+              style={{marginBottom: 10, marginTop: 40, paddingTop: 8,
+                paddingBottom: 8, borderColor: 'black', borderWidth: 2,
+                borderRadius: 10, backgroundColor: 'black', shadowColor: 'yellow', shadowRadius: 30,
+              }}
+            >
+              <Text fontWeight="bold" fontSize="large" color="primary" style={{alignSelf: 'center'}} > Account details </Text>
+            </Pressable>
+
         </Container>
 
         {
           userType === 'new' ? (
             <ContinueButton
               disabled={continueButtonDisabled}
-              // onPress={() =>
-              //    navigation.navigate(SceneName.Main, { screen: SceneName.Swipe })
-              // }
+              loading={continueButtonDisabled}
               onPress={handleProfile}
             >
               Next
@@ -513,15 +641,14 @@ const EditProfile = ({ route }) => {
           ) : (
             <ContinueButton
               disabled={continueButtonDisabled}
-              // onPress={() =>
-              //    navigation.navigate(SceneName.Main, { screen: SceneName.Swipe })
-              // }
+              loading={continueButtonDisabled}
               onPress={handleProfile}
             >
               Save profile
             </ContinueButton>
           )
         }
+          
 
       </KeyboardAvoidingView>
       <BottomPadding

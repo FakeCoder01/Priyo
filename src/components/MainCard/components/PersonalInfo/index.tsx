@@ -8,16 +8,26 @@ function PersonalInfo({ user }) {
     <Glassmorphism>
       <Container>
         <Name style={{marginBottom: 5}}>
-          {user.name}
+          {user.name.toString().split(" ")[0]}
           <Age>, {user.age}</Age>
         </Name>
-        <Description style={{marginBottom: 15}}>{user.bio}</Description>
+        <Description style={{marginBottom: 12}}>{user.bio}</Description>
        
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 5}}>
         {user.tag_names.map((tag) => (
-          <View key={tag.id} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6, marginBottom: 4, backgroundColor: '#fb167ce8', paddingTop: 3,
-              paddingBottom: 3, paddingLeft: 6, paddingRight: 6, borderRadius: 20}}>
-            <Image source={{ uri: tag.icon }} style={{ width: 20, height: 20, marginRight: 3 }} />
+          <View key={tag.id} style={{ 
+            flexDirection: 'row',
+            flexWrap : 'wrap',
+            borderRadius : 50,
+            paddingVertical : 6,
+            paddingLeft : 6,
+            paddingRight : 10,
+            alignItems : 'center',
+            marginRight : 3,
+            marginVertical : 2,
+            backgroundColor: "#EE61A1"
+          }}>
+            <Image source={{ uri: tag.icon }} style={{width: 25, height: 25,  marginRight: 5, borderRadius : 50}} />
             <Text style={{color: 'white'}}>{tag.name}</Text>
           </View>
         ))}

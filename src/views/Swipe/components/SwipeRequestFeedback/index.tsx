@@ -13,6 +13,7 @@ import {
 import { useSelector } from "react-redux";
 import { RootReducer } from "~store/reducers";
 import { EmptyAnimation, LogoLoading } from "./styles";
+import { fetchUsersRequest } from "~store/sagas/users/list";
 
 export const EmptyComponent = () => {
   return (
@@ -30,7 +31,7 @@ function SwipeRequestFeedback() {
   const offline = useIsOffline();
   const request = useSelector((state: RootReducer) => state.users.request);
 
-  const refetch = () => null;
+  const refetch = () => null ; // fetchUsersRequest();
 
   if (request?.loading) {
     return (

@@ -10,8 +10,10 @@ import {
   SlideInLeft,
 } from "react-native-reanimated";
 
+
 export default function Component(props) {
-  const { children, self, createdAt, status } = props;
+
+  const { children, self, sent_at, status } = props;
 
   const isLoading = status === FeedbackStatus.Loading;
 
@@ -25,7 +27,7 @@ export default function Component(props) {
     >
       <Text selectable>{children}</Text>
       <Info>
-        <Time>{moment(createdAt).format("HH:mm")}</Time>
+        <Time>{moment(sent_at).format("HH:mm")}</Time>
         {self && <Feedback style={{ marginLeft: 5 }} status={status} />}
       </Info>
     </Message>
