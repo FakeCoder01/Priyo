@@ -4,14 +4,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Button, Text } from "~components";
 import { Title, Highlight } from "./styles";
-import Logo from "~images/Logo.svg";
+import LogoActive from "~images/LogoActive";
 import HeroText from "./components/HeroText";
 import EmailInput from "./components/EmailInput";
 import PasswordInput from "./components/PasswordInput";
 import { KeyboardAvoidingView, Platform, Alert, Pressable, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { ThemeContext } from "styled-components/native";
 import { SceneName } from "~src/@types/SceneName";
+import { ThemeContext } from "styled-components/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SERVER_URL } from "~constants";
 
@@ -23,9 +23,11 @@ export const useCustomBottomInset = () => {
 const Authentication = () => {
 
   const [loadingScreen, setLoadingScreen] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const checkUserAlreadyLogged = async () => {
+      setLoading(true);
       const auth_token = await AsyncStorage.getItem('token');
       if (auth_token !== null && auth_token !== undefined && auth_token !== ''){
         const user_login = await fetch(SERVER_URL + '/user/login/validation/', {
@@ -43,14 +45,14 @@ const Authentication = () => {
       }
     };
     checkUserAlreadyLogged();
-    setLoadingScreen(false);
+    setLoading(false);
   }, []);
 
   const insets = useSafeAreaInsets();
   const bottomInset = useCustomBottomInset();
   const themeContext = useContext(ThemeContext);
   const navigation = useNavigation();
-  const [loading, setLoading] = useState(false);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -108,11 +110,8 @@ const Authentication = () => {
           style={{ paddingTop: 60 + insets.top }}
         >
           
-          <Logo
-            style={{ marginBottom: 25 }}
-            width={70}
-            height={70}
-            fill={"#e088da"}
+          <LogoActive
+            style={{ marginBottom: 25, width : 80, height : 80 }}
           />
         <HeroText />
 

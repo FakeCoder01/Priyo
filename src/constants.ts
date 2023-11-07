@@ -13,5 +13,5 @@ export const ACTION_OFFSET = 100;
 export const ACTION_VELOCITY = 1000;
 export const ACTION_THRESHOLD = 1 / 35;
 
-export const SERVER_URL = "http://10.20.155.132";
-export const WEBSOCKET_URL = "ws://10.20.155.132";
+export const SERVER_URL = "http://37.220.86.171";
+export const WEBSOCKET_URL = "ws://37.220.86.171";

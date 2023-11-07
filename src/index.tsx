@@ -7,8 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import Router from "./views/index.routes";
 import { store } from "./store";
 import { Provider } from "react-redux";
-import { Loading, SafeComponent } from "~components";
-import { LogBox } from "react-native";
+import { SafeComponent } from "~components";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { enableScreens } from "react-native-screens";
@@ -63,4 +62,4 @@ export default function App() {
   );
 }
 
-registerRootComponent(App, { shouldEnableStrictMode: false });
+registerRootComponent(App);

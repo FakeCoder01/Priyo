@@ -11,6 +11,10 @@ import Loading from "~components/Loading";
 import Button from "~components/Button";
 import NetInfo from "@react-native-community/netinfo";
 import ErrorBoundary from "react-native-error-boundary";
+import { useNavigation } from "@react-navigation/native";
+import { SceneName } from "~src/@types/SceneName";
+
+
 
 export const OfflineComponent = ({ refetch }: { refetch: () => void }) => {
   return (
@@ -28,6 +32,9 @@ export const OfflineComponent = ({ refetch }: { refetch: () => void }) => {
 };
 
 export const RequestErrorComponent = ({ refetch }: { refetch: () => void }) => {
+
+  const navigation = useNavigation();
+
   return (
     <Container>
       <Content>
@@ -36,7 +43,7 @@ export const RequestErrorComponent = ({ refetch }: { refetch: () => void }) => {
         <ContainedText>
           We are trying to find your next love 
         </ContainedText>
-        <Button onPress={() => refetch()}>Retry</Button>
+        <Button onPress={() => navigation.navigate(SceneName.EditProfile)}>Go to Profile</Button>
       </Content>
     </Container>
   );

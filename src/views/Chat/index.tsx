@@ -16,6 +16,7 @@ import { SERVER_URL, WEBSOCKET_URL } from "~constants";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Creators } from "./store/reducers";
 import { useNavigation } from "@react-navigation/native";
+import Button from "~components/Button";
 
 const Empty = () => <NextDay message={{ sent_at: new Date() }} />;
 
@@ -25,26 +26,32 @@ export type IChat = RouteProp<RootStackParamList, SceneName.Chat>;
 
 function MessageHookComponent({ chatProfile, ws, ownID }) {
   const [state, dispatch] = useReducer(reducers, INITIAL_STATE);
-
-  if (ws && ws != null) ws.onmessage = (event) => {
-    const tmp_message = JSON.parse(event.data).data;
-    const new_message = {
-      message_id: tmp_message.message_id,
-      match: tmp_message.match,
-      sender: tmp_message.sender,
-      image: tmp_message.image,
-      self_sender: (tmp_message.sender === ownID.toString().replaceAll("-", "") ? true : false),
-      message: tmp_message.message,
-      sent_at: tmp_message.sent_at,
-      status: "success",
-    };
-    dispatch(Creators.addMessage({message:new_message}));
-  }
+  useEffect (() => {
+    if (ws && ws != null) ws.onmessage = (event) => {
+      const tmp_message = JSON.parse(event.data).data;
+      const new_message = {
+        message_id: tmp_message.message_id,
+        match: tmp_message.match,
+        sender: tmp_message.sender,
+        image: tmp_message.image,
+        self_sender: (tmp_message.sender === ownID.toString().replaceAll("-", "") ? true : false),
+        message: tmp_message.message,
+        sent_at: tmp_message.sent_at,
+        status: "success",
+      };
+      dispatch(Creators.addMessage({message:new_message}));
+      
+      return;
+    }
+  }, [ ws ])
+  
   useEffect(() => { dispatch(Creators.setMessages({messages:chatProfile.messages})); }, [chatProfile.messages]);
 
   const displayMessages = Selectors.getMessagesDisplay(state as State);
 
   const insets = useSafeAreaInsets();
+
+  
 
   return (
     <Store.Provider value={{ state, dispatch }}>
@@ -58,6 +65,7 @@ function MessageHookComponent({ chatProfile, ws, ownID }) {
           matched_on={chatProfile['matched_on']}
         />
         <SafeComponent>
+
           {displayMessages.length > 0 ? (
             <Messages
               inverted={!!displayMessages?.length}
@@ -75,9 +83,9 @@ function MessageHookComponent({ chatProfile, ws, ownID }) {
             </Container>
           )}
 
-
         </SafeComponent>
         <Send socket={ws} profile_id={ownID} match_id={chatProfile['match_id']}/>
+
       </Container>
       <BottomPadding style={{ height: insets.bottom }} />
     </Store.Provider>
@@ -94,6 +102,7 @@ function Chat() {
   const match = context['user'];
   const [ownID, setOwnID] = useState('');
   const [ws, setWS] = useState(null);
+  const [showChat, setShowChat] = useState(false);
 
 
   const setAuthToken = async () => {
@@ -129,6 +138,7 @@ function Chat() {
       const chat_profile = await chat_profile_req.json();
       if (chat_profile_req.ok && chat_profile_req.status === 200) {
         setChatProfile(chat_profile);
+        setUpWebSocket();
         return true;
       }
       else {
@@ -136,28 +146,30 @@ function Chat() {
         return false;
       }
     };
-
-    const openWebSocketConnection = async () => {
-
-      const WS_URL = `${WEBSOCKET_URL}/ws/chat/match/${match.id}/?token=${token}&id=${ownID}`;
-      const socket = new WebSocket(WS_URL);
-      setWS(socket);
-    }
     if (!fetchUserMessages()) {
       navigation.navigate(SceneName.Messages);
     }
-    openWebSocketConnection();
-
   }, [token]);
 
-  // useEffect(() => { if (!ws) return; }, [ws]);
+  const setUpWebSocket = () => {
+    const WS_URL = `${WEBSOCKET_URL}/ws/chat/match/${match.id}/?token=${token}&id=${ownID}`;
+    const socket = new WebSocket(WS_URL);
+    setWS(socket);
+    setShowChat(true);
+  }
 
-  return (
+  return showChat ? (
     <MessageHookComponent
       chatProfile={chatProfile}
       ws={ws}
       ownID={ownID}
     />
+  ) : (
+    <Container style={{alignItems : 'center'}}>
+      <Text fontSize="large" style={{marginTop : 350, marginBottom: 350}} fontWeight="extraBold">Loading..</Text>
+      <Button onPress={()=>navigation.goBack()}
+      style={{backgroundColor: 'gray', borderWidth : 0, width : 200}}>Back</Button>
+    </Container>
   );
 }
 

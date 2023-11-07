@@ -2,9 +2,9 @@ import React, { useState, useContext } from "react";
 import { BottomCard, Container, Description, TopCard } from "./styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Button, Text } from "~components";
+import { Button } from "~components";
 import { Title, Highlight } from "./styles";
-import Logo from "~images/Logo.svg";
+import LogoActive from "~images/LogoActive";
 import HeroText from "./components/HeroText";
 import EmailInput from "./components/EmailInput";
 import PasswordInput from "./components/PasswordInput";
@@ -15,6 +15,7 @@ import { SceneName } from "~src/@types/SceneName";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { SERVER_URL } from "~constants";
+import { Text } from "react-native";
 
 export const useCustomBottomInset = () => {
   const insets = useSafeAreaInsets();
@@ -63,12 +64,11 @@ const Register = () => {
       setLoading(false);
       const authToken  = data.token;
       await AsyncStorage.setItem('token', authToken);
-      Alert.alert("Otp : " + data.email_otp);
       navigation.navigate(SceneName.OneTimeCode as any, {email : email});
 
     } else {
       setLoading(false);
-      Alert.alert(data.detail);
+      Alert.alert("Fill all the fields carefully", data.detail);
     }
   };
 
@@ -88,11 +88,8 @@ const Register = () => {
           }
           style={{ paddingTop: 60 + insets.top }}
         >
-          <Logo
-            style={{ marginBottom: 25 }}
-            width={70}
-            height={70}
-            fill={themeContext.colors.text}
+          <LogoActive
+            style={{ marginBottom: 25, width : 80, height : 80 }}
           />
           <HeroText />
         </TopCard>
@@ -100,26 +97,15 @@ const Register = () => {
           <Title>
             Create an <Highlight>Account</Highlight>
           </Title>
-          <Description style={{marginTop: 2}}>
-            
-            Already have an account?&nbsp;
-
+          <Description style={{marginTop: 2, flexDirection : 'row'}}>
+            Already have an account? &nbsp;
             <Pressable onPress={() => navigation.navigate(SceneName.Authentication)} >
-              <Text fontSize="large" fontWeight="extraBold" style={{color: '#2ceae1', textDecorationLine: 'underline'}}>
-                Log in
-              </Text>
+              <Text style={{color: '#2ceae1', textDecorationLine: 'underline',
+               fontSize : 18, fontWeight : '800',
+              }}>Log in</Text>
             </Pressable>
 
-
           </Description>
-{/* 
-          <NameInput
-            blurOnSubmit={false}
-            placeholder="Your name"
-            setName={setName}
-          /> 
-phind.co*/}
-
 
           <EmailInput
             blurOnSubmit={false}
@@ -141,13 +127,9 @@ phind.co*/}
             setPassword={setConfirmPassword}
           />
 
-
           <Button loading={loading} onPress={handleRegister}>
             Register
           </Button>
-
-
-          
 
           
         </BottomCard>

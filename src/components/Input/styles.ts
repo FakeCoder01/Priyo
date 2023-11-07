@@ -1,6 +1,8 @@
 import Color from "color";
 import styled from "styled-components/native";
 import cancelIcon from "~images/Cancel.svg";
+import calenderIcon from "~images/Calender.svg";
+
 
 export const Content = styled.View`
   flex-direction: row;
@@ -33,4 +35,9 @@ export const CancelIcon = styled(cancelIcon).attrs((props) => ({
   opacity: 0.6;
   width: 18px;
   height: 18px;
+`;
+
+export const DatePickerIcon = styled(calenderIcon)`
+  width: 25px;
+  height: 25px;
 `;

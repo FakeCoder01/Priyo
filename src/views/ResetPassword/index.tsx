@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Button, Text } from "~components";
 import useTimer from "./hooks/useTimer";
-import Logo from "~images/Logo.svg";
+import LogoActive from "~images/LogoActive";
 import HeroText from "./components/HeroText";
 import EmailInput from "./components/EmailInput";
 import PasswordInput from "./components/PasswordInput";
@@ -52,11 +52,11 @@ const ResetPassword = () => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "email": email
+        "email": email,
+        "send_type" : "forget"
       })
     });
     const otp_res = await resend_otp.json();
-    console.log(otp_res);
   }
 
 
@@ -111,13 +111,12 @@ const ResetPassword = () => {
         }),
       });
       const data = await response.json();
-      console.log(data);
       if (response.ok && response.status === 200 && data.next === 'login') {
         setLoading(false);
         navigation.navigate(SceneName.Authentication);
       } else {
         setLoading(false);
-        Alert.alert(data.detail);
+        Alert.alert("Email and/or OTP mismatch", data.detail);
       }
     }
   };
@@ -137,11 +136,8 @@ const ResetPassword = () => {
           }
           style={{ paddingTop: 60 + insets.top }}
         >
-          <Logo
-            style={{ marginBottom: 25 }}
-            width={70}
-            height={70}
-            fill={themeContext.colors.text}
+          <LogoActive
+            style={{ marginBottom: 25, width : 80, height : 80 }}
           />
           <HeroText />
         </TopCard>

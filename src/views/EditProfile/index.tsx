@@ -70,8 +70,8 @@ const AddUserPhoto = ({ picture, onDelete, onAdd }) => {
 
 const AddProfilePhoto = (profile_pic) => {
   const themeContext = useContext(ThemeContext);
+  const [hasPicture, setHasPicture] = useState(!! profile_pic.profile_pic);
   const [fatBoy, setFatBoy] = useState(profile_pic.profile_pic);
-  const hasPicture = !! profile_pic.profile_pic;
 
 
   const style = useAnimatedStyle(() => {
@@ -83,8 +83,7 @@ const AddProfilePhoto = (profile_pic) => {
     <UserPictureContainer>
       <UserPictureContent
         style={{borderColor: 'orange', borderWidth: 3}}
-        key={profile_pic.profile_pic}
-        {...(profile_pic.profile_pic && { source: { uri: fatBoy == '' ? (profile_pic.profile_pic) : fatBoy } })}
+        {...(profile_pic.profile_pic && { source: { uri: fatBoy } })}
       >
         {!hasPicture && <Placeholder/>}
       </UserPictureContent>
@@ -116,9 +115,9 @@ const AddProfilePhoto = (profile_pic) => {
               body: profilePicData 
             });
             const profile_pic_response = await profile_pic_req.json();
-
             if(profile_pic_req.ok && profile_pic_req.status === 200){
               setFatBoy(SERVER_URL + profile_pic_response.profile_pic);
+              setHasPicture(true);
             }else{
               console.log("profile_photo upload failed")
             }
@@ -579,12 +578,13 @@ const EditProfile = ({ route }) => {
           </Pressable>
 
           <Input
-            onTouchStart={() => setShowDateModal(true)}
             keyboardType="numeric"
             title="Your birthday"
+            datePickerHandler={setShowDateModal}
             placeholder="yyyy-mm-dd"
             value={dateOfBirth}
             showClearIcon={false}
+            showDatePicker={true}
             onChangeText={(v) => setDateOfBirth(v)}
           />
       

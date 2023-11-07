@@ -18,11 +18,12 @@ import EditProfileView from "~views/EditProfile";
 import MessagesView from "~views/Messages";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
-import Logo from "~images/Logo.svg";
+
+import Logo from "~assets/images/Logo";
 import Messages from "~images/Messages.svg";
 import Profile from "~images/User.svg";
 
-import LogoActive from "~images/LogoActive.svg";
+import LogoActive from "~images/LogoActive";
 import MessagesActive from "~images/MessagesActive.svg";
 import ProfileActive from "~images/UserActive.svg";
 import { Dimensions } from "react-native";
@@ -51,7 +52,8 @@ const Tabs = () => {
       <Tab.Screen
         options={{
           tabBarIcon: ({ focused, color }) =>
-            focused ? <LogoActive /> : <Logo fill={color} />,
+            focused ? <LogoActive style={{width : 35, height : 35}} /> : 
+            <LogoActive style={{width : 33, height : 33}} />,
         }}
         name={SceneName.Swipe}
         component={SwipeView}

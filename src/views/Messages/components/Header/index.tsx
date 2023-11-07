@@ -1,9 +1,8 @@
 import React from "react";
 import { Title, Container } from "./styles";
 import { Text } from "~components";
-import { FlatList, Alert } from "react-native";
+import { FlatList, View } from "react-native";
 import { Preview } from "../Preview";
-import { View } from "react-native";
 
 export const Header = (matches) => {
 
@@ -11,7 +10,7 @@ export const Header = (matches) => {
 
   return (
     <Container>
-      <Title>
+      <Title style={{display : 'flex', flexDirection : 'row',}}>
         <Text fontWeight="bold">Matches</Text>
       </Title>
 
@@ -25,7 +24,7 @@ export const Header = (matches) => {
         />
       ) : (
           <View style={{alignItems: 'center'}}>
-            <Text fontWeight="semiBold"> No matches keep loving </Text>
+            <Text fontWeight="semiBold"> No matches keep swiping </Text>
           </View>
       )}
       

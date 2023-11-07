@@ -167,16 +167,18 @@ const UserProfile = ({ route }) => {
   const detailsStyles = StyleSheet.create({
     "full" : {
       borderWidth : 0.2,
-      borderColor : themeContext.colors.primary,
+      // borderColor : themeContext.colors.primary,
+      borderColor : 'black',
       fontWeight : '400',
-      color : 'black',
+      color : '#373F51',
       maxWidth : 362,
       minWidth : 362,
       width : 362,
       height : 60,
       borderRadius : 5,
       fontSize : 18,
-      backgroundColor : '#d5ceea',
+      // backgroundColor : '#CCF5AC',
+      backgroundColor : themeContext.colors.secondaryBackground,
       flexDirection : 'row',
       marginVertical : 4,
       flexWrap : 'wrap',
@@ -272,7 +274,7 @@ const UserProfile = ({ route }) => {
                 </View>
               ))}
             </View>
-            <View style={{ marginTop : 20, marginBottom : 10}}>
+            <View style={{ marginTop : 25, marginBottom : 10}}>
               <View style={{flexDirection : "row", marginBottom : 14}}>
                 <HeartRightSwipe width={25} height={25} fill={"black"} 
                   style={{marginRight : 6, fontWeight : "800"}}
@@ -315,7 +317,8 @@ const UserProfile = ({ route }) => {
                   }
 
                   <View style={{marginVertical : 20, height : 3, backgroundColor : themeContext.colors.border, width : 360}}></View>
-
+                  
+     
 
                   {
                     shouldShowData(user.questions.religion) && (

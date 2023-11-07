@@ -22,7 +22,6 @@ export function* fetchUsersRequest() {
     });
 
     if(response != null && response != undefined ){
-
       yield put(
         Actions.users.list.success({
           users: response,

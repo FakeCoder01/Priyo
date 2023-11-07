@@ -28,6 +28,7 @@ export default function Component({name='', profile_id='', profile_pic='', match
 
     if(unmatch.ok && unmatch.status === 204){
       Alert.alert("You unmatched with " + name.split(" ")[0]);
+      navigation.navigate(SceneName.Swipe);
     }else{
       Alert.alert("Something went wrong");
     }

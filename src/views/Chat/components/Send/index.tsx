@@ -49,9 +49,7 @@ function Component({ socket, profile_id, match_id='' }) {
     }
   };
 
-  useEffect(() => {
-    setAuthToken();
-  }, []);
+  useEffect(() => { setAuthToken(); }, []);
 
 
   const handleChatImageUpload = async (upload_from_type) => {

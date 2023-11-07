@@ -59,7 +59,6 @@ const Authentication = () => {
       })
     });
     const otp_res = await resend_otp.json();
-    console.log(otp_res);
     setAttemptCount(attempCount + 1);
   }
 

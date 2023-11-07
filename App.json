@@ -7,7 +7,10 @@
     "slug": "priyo",
     "icon": "./src/assets/images/icon.png",
     "orientation": "portrait",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "androidStatusBar": {
       "barStyle": "light-content",
       "backgroundColor": "#070F26",
@@ -25,7 +28,7 @@
       "adaptiveIcon": {
         "backgroundColor": "#111D40"
       },
-      "package": "ru.com.priyo"
+      "package": "ru.priyo.priyo"
     },
     "packagerOpts": {
       "config": "metro.config.js",
@@ -42,6 +45,11 @@
         "wasm",
         "svg"
       ]
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9a6bcfae-79d9-4d26-b2ad-78330f5fbf73"
+      }
     }
   }
 }

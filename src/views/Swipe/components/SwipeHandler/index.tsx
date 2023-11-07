@@ -63,12 +63,10 @@ const SwipeHandler: React.FC<ISwipeHandler> = ({ card, onMatch, onMatchCard }) =
         const right_swipe = await send_right.json();
         if(send_right.ok && send_right.status === 200){
           // just right swipe
-          console.log("Right Swipped User")
         }
         else if(send_right.ok && send_right.status === 201){
           onMatchCard(right_swipe);
           onMatch(true);
-          console.log(right_swipe)
         }else{
           console.log("went wrong");
         }
@@ -127,6 +125,8 @@ const SwipeHandler: React.FC<ISwipeHandler> = ({ card, onMatch, onMatchCard }) =
       translation.x.value * -1,
       [-ACTION_OFFSET, 0, ACTION_OFFSET],
       [ROTATION_DEG, 0, -ROTATION_DEG]
+
+
     );
 
     return {
@@ -138,8 +138,6 @@ const SwipeHandler: React.FC<ISwipeHandler> = ({ card, onMatch, onMatchCard }) =
       ...(isFirstCard && { zIndex: 2 }),
     };
   });
-
-
 
 
   return (

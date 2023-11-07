@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Container } from "./styles";
 import { SafeComponent } from "~components";
-import { FlatList, Alert } from "react-native";
+import { FlatList, Alert, Button, View } from "react-native";
 import { Message } from "./components/Message";
 import { Header } from "./components/Header";
 import Divider from "~components/Divider";
 import { PICTURE_SIZE } from "./components/Message/styles";
 import { Text } from "~components";
-import { View } from "react-native";
 import { SERVER_URL } from "~constants";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 
 function Component() {
@@ -75,6 +73,7 @@ function Component() {
         ) : (
           <View style={{marginTop: 20}}>
             {Header(matches)}
+
             <View  style={{alignItems: 'center'}}>
               <Text fontWeight="semiBold"> You haven't started a chat yet </Text>
             </View>

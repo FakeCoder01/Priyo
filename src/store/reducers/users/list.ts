@@ -51,7 +51,7 @@ const fetchUsersFailure = (
 ) =>
   produce(state, (draft) => {
     draft.request.loading = false;
-    draft.request.error = payload.message;
+    draft.request.error = payload.message
 
     return draft;
   });

@@ -58,6 +58,7 @@ const Matches = () => {
   }
 
 
+
   return (
     <Container style={{ marginBottom: bottomInset }}>
       <StatusBar style={themeContext.dark ? "light" : "dark"} />
