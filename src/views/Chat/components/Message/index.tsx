@@ -13,7 +13,7 @@ import {
 
 export default function Component(props) {
 
-  const { children, self, sent_at, status } = props;
+  const { children, self, sent_at, status, isImage } = props;
 
   const isLoading = status === FeedbackStatus.Loading;
 
@@ -24,9 +24,10 @@ export default function Component(props) {
       exiting={self ? !isLoading && SlideOutRight : SlideOutLeft}
       sending={self}
       status={status}
+      {...props}
     >
       <Text selectable>{children}</Text>
-      <Info>
+      <Info style={isImage && ({marginTop : 85})}>
         <Time>{moment(sent_at).format("HH:mm")}</Time>
         {self && <Feedback style={{ marginLeft: 5 }} status={status} />}
       </Info>

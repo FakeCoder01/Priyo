@@ -15,12 +15,16 @@ const ImageViewer = ({image_url, cls_fun}) => {
       backgroundColor : "#F0F66E"
     },
     image : {
-        width : 600,
-        height : 700
-    }
+      width : 600,
+      height : 700,
+      resizeMode : 'center',
+      marginBottom : 8,
+      marginTop : 4,
+    },
+    
   });
   
-    const [isModelVisible, __ ] = useState(true);
+    const [isModelVisible, _ ] = useState(true);
 
     return (
         <Modal visible={isModelVisible} animationType="fade">
@@ -34,7 +38,7 @@ const ImageViewer = ({image_url, cls_fun}) => {
               style={{
                 borderColor : themeContext.colors.secondaryBackground,
                 backgroundColor : "#cbd3c6",
-                width : 200,
+                width : 150,
                 borderWidth : 0.5,
               }}
             >

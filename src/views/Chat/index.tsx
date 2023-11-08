@@ -158,6 +158,13 @@ function Chat() {
     setShowChat(true);
   }
 
+  const handleWebSocketRealtime = async () => {
+    const _r = await fetch(SERVER_URL + "/handler/");
+    const _b = await _r.json()
+    if(_r.ok && _r.status === 200) return true;
+    return false;
+  }
+
   return showChat ? (
     <MessageHookComponent
       chatProfile={chatProfile}

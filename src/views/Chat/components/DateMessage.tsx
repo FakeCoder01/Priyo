@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { ListRenderItemInfo, Image, Pressable } from "react-native";
+import { ListRenderItemInfo, Image, Pressable} from "react-native";
 import { Selectors, useContext } from "../store";
 import type { Message as IMessage } from "../store/reducers";
 import Message from "./Message";
@@ -22,10 +22,10 @@ const DateMessage: React.FC<ListRenderItemInfo<IMessage>> = ({
       display: 'flex',
       flexDirection: 'column',
       flexWrap : 'nowrap',
-      height: 500,
-      resizeMode: 'contain',
-      width: 300,
-      objectFit : 'scale-down'
+      height: 100,
+      width: 150,
+      marginBottom  : -78,
+      borderRadius : 8,
     },
   });
 
@@ -43,15 +43,17 @@ const DateMessage: React.FC<ListRenderItemInfo<IMessage>> = ({
       }
 
         
-        <Message {...item} self={item.self_sender} date={item.sent_at} status={item.status}>
-          {item.message && (item.message)}{item.image && ("\n\n") }
-          {item.image && (
-            // <Pressable style={{maxHeight : 30}} onPress={()=>setBigScreen(true)}>
-              <Image style={styles.image} 
-                source={{uri : SERVER_URL + item.image, cache : 'only-if-cached'}}
-              />
-            // </Pressable>
-          )}
+        <Message {...item} self={item.self_sender} date={item.sent_at} status={item.status}
+         style={item.image && ({height : 150,})} isImage={item.image}>
+          {item.message && (item.message)}
+            {item.image && (
+              <Pressable style={{}} onPress={()=>setBigScreen(true)}>
+                <Image style={styles.image} 
+                  source={{uri : SERVER_URL + item.image, cache : 'only-if-cached'}}
+                />
+              </Pressable>
+            )}
+
         </Message>
 
       <NextDay message={item} nextMessage={nextMessage} />

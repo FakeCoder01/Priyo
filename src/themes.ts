@@ -48,15 +48,27 @@ export const DefaultConfigs = {
   },
 };
 
+// export const DarkTheme: DefaultThemeProps = {
+//   ...DefaultConfigs,
+//   dark: true,
+//   colors: {
+//     primary: "#D45B90",
+//     text: "#ffffff",
+//     background: "#07112D",
+//     secondaryBackground: "#111D40",
+//     border: "#111D40",
+//   },
+// };
+
 export const DarkTheme: DefaultThemeProps = {
   ...DefaultConfigs,
-  dark: true,
+  dark: false,
   colors: {
-    primary: "#D45B90",
-    text: "#ffffff",
-    background: "#07112D",
-    secondaryBackground: "#111D40",
-    border: "#111D40",
+    primary: "#EE61A1",
+    text: "#070F26",
+    background: "#ffffff",
+    secondaryBackground: "#F8F8F8",
+    border: "#f2f2f2",
   },
 };
 
