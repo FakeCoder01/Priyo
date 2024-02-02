@@ -48,6 +48,7 @@ const Authentication = () => {
     navigation.navigate(SceneName.Authentication);
   }
 
+
   const handleResendOTP = async () => {
     const resend_otp = await fetch(SERVER_URL + "/user/verify/send/", {
       method : 'POST',
@@ -58,7 +59,10 @@ const Authentication = () => {
         "email" : email
       })
     });
-    const otp_res = await resend_otp.json();
+    if (resend_otp.ok && resend_otp.status == 200){
+      Alert.alert("Success! otp sent", "A new otp has been sent to your email")
+    }
+    // const otp_res = await resend_otp.json();
     setAttemptCount(attempCount + 1);
   }
 
@@ -84,7 +88,7 @@ const Authentication = () => {
         if (status_code === 200){
           return result.json();
         }else{
-          Alert.alert("Wrong Code")
+          Alert.alert("Wrong code", "The code you put in is invalid. Check your email for the code or click Resend")
           throw new Error('Verification Failed');
           
         }
@@ -92,7 +96,7 @@ const Authentication = () => {
       })
       .then((data) => {
         if (data.next === 'setup'){
-          Alert.alert('Email verified');
+          Alert.alert("Success! email verified", "Your account has been created successfully");
 
           navigation.reset({
             index: 0,

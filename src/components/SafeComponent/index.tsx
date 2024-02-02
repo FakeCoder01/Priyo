@@ -13,7 +13,7 @@ import NetInfo from "@react-native-community/netinfo";
 import ErrorBoundary from "react-native-error-boundary";
 import { useNavigation } from "@react-navigation/native";
 import { SceneName } from "~src/@types/SceneName";
-
+import RNRestart from 'react-native-restart';
 
 
 export const OfflineComponent = ({ refetch }: { refetch: () => void }) => {
@@ -35,15 +35,19 @@ export const RequestErrorComponent = ({ refetch }: { refetch: () => void }) => {
 
   const navigation = useNavigation();
 
+  const handleRestart = () => {
+  };
+
   return (
     <Container>
       <Content>
         <ErrorIllustration />
         <Title>Something went wrong</Title>
         <ContainedText>
-          We are trying to find your next love 
+          We are trying to find your next matches
         </ContainedText>
-        <Button onPress={() => navigation.navigate(SceneName.EditProfile)}>Go to Profile</Button>
+        <Button style={{marginTop : 20}} onPress={handleRestart}>Reload</Button>
+        <Button style={{marginTop : 50, backgroundColor : 'gray', borderColor : 'white'}} onPress={() => navigation.navigate(SceneName.EditProfile)}>Go to Profile</Button>
       </Content>
     </Container>
   );
@@ -56,6 +60,7 @@ export const UnknownErrorComponent = () => {
         <ErrorIllustration />
         <Title>Something went wrong</Title>
         <ContainedText>Try again</ContainedText>
+        <Button>Reload</Button>
       </Content>
     </Container>
   );

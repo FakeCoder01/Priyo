@@ -68,75 +68,75 @@ const AddUserPhoto = ({ picture, onDelete, onAdd }) => {
   );
 };
 
-const AddProfilePhoto = (profile_pic) => {
-  const themeContext = useContext(ThemeContext);
-  const [hasPicture, setHasPicture] = useState(!! profile_pic.profile_pic);
-  const [fatBoy, setFatBoy] = useState(profile_pic.profile_pic);
+// const AddProfilePhoto = (profile_pic) => {
+//   const themeContext = useContext(ThemeContext);
+//   const [hasPicture, setHasPicture] = useState(!! profile_pic.profile_pic);
+//   const [fatBoy, setFatBoy] = useState(profile_pic.profile_pic);
 
 
-  const style = useAnimatedStyle(() => {
-    const rotation = withSpring(`0deg`);
-    return { transform: [{ rotateZ: rotation }] };
-  });
+//   const style = useAnimatedStyle(() => {
+//     const rotation = withSpring(`0deg`);
+//     return { transform: [{ rotateZ: rotation }] };
+//   });
 
-  return (
-    <UserPictureContainer>
-      <UserPictureContent
-        style={{borderColor: 'orange', borderWidth: 3}}
-        {...(profile_pic.profile_pic && { source: { uri: fatBoy } })}
-      >
-        {!hasPicture && <Placeholder/>}
-      </UserPictureContent>
-      <AddRemoveContainer
-        inverted={hasPicture}
-        onPress={async () => {
+//   return (
+//     <UserPictureContainer>
+//       <UserPictureContent
+//         style={{borderColor: 'orange', borderWidth: 3}}
+//         {...(profile_pic.profile_pic && { source: { uri: fatBoy } })}
+//       >
+//         {!hasPicture && <Placeholder/>}
+//       </UserPictureContent>
+//       <AddRemoveContainer
+//         inverted={hasPicture}
+//         onPress={async () => {
 
-          const profileImageResult = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            quality: 1,
-            base64: false,
-          });
-          if(!profileImageResult.canceled){
-            const profilePicData = new FormData();
+//           const profileImageResult = await ImagePicker.launchImageLibraryAsync({
+//             mediaTypes: ImagePicker.MediaTypeOptions.Images,
+//             allowsEditing: true,
+//             quality: 1,
+//             base64: false,
+//           });
+//           if(!profileImageResult.canceled){
+//             const profilePicData = new FormData();
 
-            profilePicData.append('profile_pic', {
-              uri : profileImageResult.assets[0].uri,
-              name: 'dp_.jpg',
-              type: 'image/jpeg'
-            } as any);
+//             profilePicData.append('profile_pic', {
+//               uri : profileImageResult.assets[0].uri,
+//               name: 'dp_.jpg',
+//               type: 'image/jpeg'
+//             } as any);
 
-            const profile_pic_req = await fetch(SERVER_URL + "/user/image/dp/", {
-              method: "POST",
-              headers: {
-                "Authorization" : "Token " + (await AsyncStorage.getItem('token')).toString(),
-                "Content-Type" : "multipart/form-data"
-              },
-              body: profilePicData 
-            });
-            const profile_pic_response = await profile_pic_req.json();
-            if(profile_pic_req.ok && profile_pic_req.status === 200){
-              setFatBoy(SERVER_URL + profile_pic_response.profile_pic);
-              setHasPicture(true);
-            }else{
-              console.log("profile_photo upload failed")
-            }
-          }else{
-            console.log("no image");
-          }
+//             const profile_pic_req = await fetch(SERVER_URL + "/user/image/dp/", {
+//               method: "POST",
+//               headers: {
+//                 "Authorization" : "Token " + (await AsyncStorage.getItem('token')).toString(),
+//                 "Content-Type" : "multipart/form-data"
+//               },
+//               body: profilePicData 
+//             });
+//             const profile_pic_response = await profile_pic_req.json();
+//             if(profile_pic_req.ok && profile_pic_req.status === 200){
+//               setFatBoy(SERVER_URL + profile_pic_response.profile_pic);
+//               setHasPicture(true);
+//             }else{
+//               console.log("profile_photo upload failed")
+//             }
+//           }else{
+//             console.log("no image");
+//           }
           
-        }}
-        style={{backgroundColor: 'violet', borderColor: 'yellow', borderWidth: 3}}
-      >
-        <Animated.View style={style}>
-          <AddRemove
-            fill={hasPicture ? 'white' : "white"}
-          />
-        </Animated.View>
-      </AddRemoveContainer>
-    </UserPictureContainer>
-  );
-};
+//         }}
+//         style={{backgroundColor: 'violet', borderColor: 'yellow', borderWidth: 3}}
+//       >
+//         <Animated.View style={style}>
+//           <AddRemove
+//             fill={hasPicture ? 'white' : "white"}
+//           />
+//         </Animated.View>
+//       </AddRemoveContainer>
+//     </UserPictureContainer>
+//   );
+// };
 
 
 export interface Positions {
@@ -150,7 +150,7 @@ const EditProfile = ({ route }) => {
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [pics, setPics] = useState([]);
-  const [profilePic, setProfilePic] = useState("");
+  // const [profilePic, setProfilePic] = useState("");
   const [gender, setGender] = useState("");
   const [genderOfInterest, setGenderOfInterest] = useState("");
   const [token, setToken] = useState('');
@@ -191,8 +191,8 @@ const EditProfile = ({ route }) => {
         "country": "Russia",
       }),
     });
-    const res = await req.json();
     if (req.ok && req.status === 200) {
+      const res = await req.json();
       return true;
     } else {
       Alert.alert("Location couldn't be updated");
@@ -217,12 +217,12 @@ const EditProfile = ({ route }) => {
       })
     });
 
-    const preference_res = await preference_req.json();
     if (preference_req.ok && preference_req.status === 200) {
+      const preference_res = await preference_req.json();
       setGenderOfInterest(preference_res.gender_preference);
       return true;
     } else {
-      Alert.alert("Preferences couldn't be updated");
+      Alert.alert("Something went wrong", "Your preferences couldn't be updated");
       return false;
     }
   }
@@ -244,11 +244,11 @@ const EditProfile = ({ route }) => {
       if (storedToken !== null && storedToken !== '') {
         setToken(storedToken);
       } else {
-        Alert.alert("Something went wrong");
+        Alert.alert("Something went wrong", "Please login.");
       }
     } catch (error) {
       console.log('Error retrieving token : ', error);
-      Alert.alert("Something went wrong");
+      Alert.alert("Something went wrong", "Please login again");
     }
   };
 
@@ -271,13 +271,13 @@ const EditProfile = ({ route }) => {
           'Content-Type': 'application/json',
         }
       });
-      const profile = await response.json();
       if (response.ok && response.status === 200) {
+        const profile = await response.json();
         setName(profile.name);
         setBio(profile.bio);
         setGender(profile.gender);
         setDateOfBirth(profile.date_of_birth);
-        setProfilePic(profile.profile_pic);
+        // setProfilePic(profile.profile_pic);
         setContinueButtonDisabled(false);
         setCity(profile.city);
         return true;
@@ -298,8 +298,8 @@ const EditProfile = ({ route }) => {
           'Content-Type': 'application/json',
         }
       });
-      const preference = await preference_req.json();
       if (preference_req.ok && preference_req.status === 200) {
+        const preference = await preference_req.json();
         setGenderOfInterest(preference.gender_preference);
         setContinueButtonDisabled(false);
         return true;
@@ -320,8 +320,8 @@ const EditProfile = ({ route }) => {
           'Content-Type': 'application/json',
         }
       });
-      const all_images = await get_images.json();
       if (get_images.ok && get_images.status === 200) {
+        const all_images = await get_images.json();
         while(all_images.length < 6){
           all_images.push({ 
             key: 'tmp_' + all_images.length + 1, 
@@ -389,16 +389,16 @@ const EditProfile = ({ route }) => {
         "date_of_birth": dateOfBirth
       })
     });
-    const result = await request.json();
     if (request.ok && request.status === 200) {
+      const result = await request.json();
       setContinueButtonDisabled(false);
       setName(result.name);
       setBio(result.bio);
       setGender(result.gender);
       setDateOfBirth(result.date_of_birth);
-      setProfilePic(result.profile_pic);
+      // setProfilePic(result.profile_pic);
       
-      Alert.alert("Updated");
+      Alert.alert("Success! profile updated", "Your information has been updated");
 
       if(userType === 'new') {
         navigation.navigate(SceneName.InfoPage)
@@ -406,7 +406,7 @@ const EditProfile = ({ route }) => {
 
       setContinueButtonDisabled(false);
     } else {
-      Alert.alert("Something went wrong");
+      Alert.alert("Something went wrong", "Your profile couldn't be updated");
       setContinueButtonDisabled(false);
       return;
     }
@@ -473,8 +473,8 @@ const EditProfile = ({ route }) => {
         },
         body: imageData
       });
-      const img_data = await uploadResponse.json();
       if(uploadResponse.ok && uploadResponse.status === 200){
+        const img_data = await uploadResponse.json();
         const nPic = {
           key: picture.key,
           newKey: img_data.id,
@@ -499,6 +499,7 @@ const EditProfile = ({ route }) => {
         setPics(newPics);
         setContinueButtonDisabled(false);
       }else{
+        Alert.alert("Something went wrong", "Your photo couldn't be updated. Try again.")
         console.log("Failed to upload photo");
         setContinueButtonDisabled(false);
         return;
@@ -530,15 +531,16 @@ const EditProfile = ({ route }) => {
           <DraggableGrid
             numColumns={numOfColumns}
             renderItem = {(picture, index) => {
-              return ( index === 5 ? (
-                <AddProfilePhoto profile_pic={profilePic}/>
-              ) : (
+              return (
+              //    index === 5 ? (
+              //   <AddProfilePhoto profile_pic={profilePic}/>
+              // ) : (
                 <AddUserPhoto
                     onDelete={() => handleDeletePhoto(picture)}
                     onAdd={() => handleUploadPhoto(picture)}
                     picture={picture}
                   />
-                )
+                // )
               )
             }}
 
@@ -649,7 +651,6 @@ const EditProfile = ({ route }) => {
           )
         }
           
-
       </KeyboardAvoidingView>
       <BottomPadding
         disabled={continueButtonDisabled}

@@ -12,11 +12,8 @@ import {
 
 
 export default function Component(props) {
-
   const { children, self, sent_at, status, isImage } = props;
-
   const isLoading = status === FeedbackStatus.Loading;
-
   return (
     <Message
       key={status}

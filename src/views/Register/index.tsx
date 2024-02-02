@@ -38,13 +38,13 @@ const Register = () => {
 
     if(email == '' || password == ''){
       setLoading(false);
-      Alert.alert("Please enter your email & password");
+      Alert.alert("Email required", "Please enter your email & password");
       return;
     }
 
     if(password != confirmPassword){
       setLoading(false);
-      Alert.alert("Password mismatch");
+      Alert.alert("Password mismatch", "Both password and confirm password must be the same.");
       return;
     }
 
@@ -59,16 +59,20 @@ const Register = () => {
         "confirm_password" : confirmPassword
       }),
     });
-    const data = await response.json();
-    if (response.ok && response.status === 201 && data.next === 'verify') {
-      setLoading(false);
-      const authToken  = data.token;
-      await AsyncStorage.setItem('token', authToken);
-      navigation.navigate(SceneName.OneTimeCode as any, {email : email});
-
+    if (response.ok && response.status === 201) {
+      const data = await response.json();
+      if(data.next === 'verify'){
+        setLoading(false);
+        const authToken  = data.token;
+        await AsyncStorage.setItem('token', authToken);
+        navigation.navigate(SceneName.OneTimeCode as any, {email : email});
+      }else {
+        setLoading(false);
+        Alert.alert("Error creating account", "Please fill all fields carefully");
+      }
     } else {
       setLoading(false);
-      Alert.alert("Fill all the fields carefully", data.detail);
+      Alert.alert("Error creating account", "Please fill all fields carefully");
     }
   };
 

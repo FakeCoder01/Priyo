@@ -80,15 +80,15 @@ const InfoPage = ({ route }) => {
             })
         });
 
-        const preference_res = await preference_req.json();
         if (preference_req.ok && preference_req.status === 200) {
+            const preference_res = await preference_req.json();
             setMinAgePreference(preference_res.min_age_preference.toString());
             setMaxAgePreference(preference_res.max_age_preference.toString());
             setDatingRadius(preference_res.dating_radius.toString());
             setHereFor(preference_res.here_for);
             return true;
         } else {
-            Alert.alert("Preferences couldn't be updated");
+            console.log("Couldn't update preferences")
             return false;
         }
         return false;
@@ -115,8 +115,8 @@ const InfoPage = ({ route }) => {
                 "place" : place
             })
         });
-        const question = await question_req.json();
         if (question_req.ok && question_req.status === 200) {
+            const question = await question_req.json();
             setFavSong(question.fav_song);
             setZodiacSign(question.zodiac_sign);
             setDrinking(question.drinking);
@@ -146,7 +146,7 @@ const InfoPage = ({ route }) => {
             if (storedToken !== null && storedToken !== '') {
                 setToken(storedToken);
             } else {
-                Alert.alert("Something went wrong");
+                Alert.alert("Something went wrong", "Please login.");
             }
         } catch (error) {
             console.log('Error retrieving token : ', error);
@@ -166,8 +166,8 @@ const InfoPage = ({ route }) => {
                     'Content-Type': 'application/json',
                 }
             });
-            const preference = await preference_get_req.json();
             if (preference_get_req.ok && preference_get_req.status === 200) {
+                const preference = await preference_get_req.json();
                 setMinAgePreference(preference.min_age_preference.toString());
                 setMaxAgePreference(preference.max_age_preference.toString());
                 setDatingRadius(preference.dating_radius.toString());
@@ -188,8 +188,8 @@ const InfoPage = ({ route }) => {
                     'Content-Type': 'application/json',
                 }
             });
-            const question_res = await question_get_req.json();
             if (question_get_req.ok && question_get_req.status === 200) {
+                const question_res = await question_get_req.json();
 
                 setFavSong(question_res.fav_song);
                 setZodiacSign(question_res.zodiac_sign);
@@ -234,9 +234,9 @@ const InfoPage = ({ route }) => {
         setContinueButtonDisabled(true);
         if (handlePreference() && handleQuestion()) {
             setContinueButtonDisabled(false);
-            Alert.alert("Infornation updated");
+            Alert.alert("Success! preference updated", "Your informations have been saved.");
         }
-        else Alert.alert("Something went wrong, try again");
+        else Alert.alert("Something went wrong", "Your information couldn't be saved. Try again.");
     }
 
     return (

@@ -85,8 +85,8 @@ function Component({ socket, profile_id, match_id='' }) {
         },
         body: imageData
       });
-      const chatImg = await uploadImage.json();
       if (uploadImage.ok && uploadImage.status === 200) {
+        const chatImg = await uploadImage.json();
         socket.send(JSON.stringify({
           "image" : chatImg.image,
           "sender" : chatImg.sender,

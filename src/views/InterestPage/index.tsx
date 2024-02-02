@@ -63,8 +63,8 @@ const InterestPage = ({ route }) => {
                'Content-Type': 'application/json',
             }
          });
-         const get_tag_res = await get_tag_req.json();
          if (get_tag_req.ok && get_tag_req.status === 200) {
+            const get_tag_res = await get_tag_req.json();
             const all_tags = get_tag_res.tag_list;
             const selected_tags = get_tag_res.tags;
 
@@ -113,8 +113,8 @@ const InterestPage = ({ route }) => {
          })
       });
 
-      const tag_res = await tag_update_req.json();
       if (tag_update_req.ok && tag_update_req.status === 200) {
+         const tag_res = await tag_update_req.json();
          setContinueButtonDisabled(false);
          Alert.alert("updated")
          return true;

@@ -32,7 +32,7 @@ export function* fetchUsersRequest() {
     }
 
   } catch (err) {
-    const error = { message: "We're having troubles finding your next love" };
+    const error = { message: "We're having troubles finding your next matches" };
     yield put(Actions.users.list.failure(error));
   }
 }

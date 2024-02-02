@@ -60,11 +60,12 @@ const SwipeHandler: React.FC<ISwipeHandler> = ({ card, onMatch, onMatchCard }) =
             "whom_liked" : user_id
           })
         });
-        const right_swipe = await send_right.json();
         if(send_right.ok && send_right.status === 200){
+          const right_swipe = await send_right.json();
           // just right swipe
         }
         else if(send_right.ok && send_right.status === 201){
+          const right_swipe = await send_right.json();
           onMatchCard(right_swipe);
           onMatch(true);
         }else{
@@ -86,8 +87,9 @@ const SwipeHandler: React.FC<ISwipeHandler> = ({ card, onMatch, onMatchCard }) =
             "profile_id" : user_id
           })
         });
-        const left_swipe = await send_left.json();
+
         if(send_left.ok && send_left.status === 201){
+          const left_swipe = await send_left.json();
         }else{
         }
       }

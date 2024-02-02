@@ -8,7 +8,10 @@ import LogoActive from "~images/LogoActive";
 import HeroText from "./components/HeroText";
 import EmailInput from "./components/EmailInput";
 import PasswordInput from "./components/PasswordInput";
-import { KeyboardAvoidingView, Platform, Alert, Pressable, ActivityIndicator } from "react-native";
+import { 
+  KeyboardAvoidingView, Platform, 
+  Alert, Pressable, ActivityIndicator 
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SceneName } from "~src/@types/SceneName";
 import { ThemeContext } from "styled-components/native";
@@ -37,8 +40,8 @@ const Authentication = () => {
             "Content-Type" : "application/json"
           }
         });
-        const user_response = await user_login.json();
         if(user_login.ok && user_login.status === 200){
+          const user_response = await user_login.json();
           await AsyncStorage.setItem('profile_id', user_response.profile_id);
           navigation.navigate(SceneName.Main);
         }
@@ -46,6 +49,7 @@ const Authentication = () => {
     };
     checkUserAlreadyLogged();
     setLoading(false);
+    setLoadingScreen(false);
   }, []);
 
   const insets = useSafeAreaInsets();
@@ -76,16 +80,16 @@ const Authentication = () => {
         "password" : password
       }),
     });
-    const data = await response.json();
     if (response.ok && response.status === 200) {
+      const data = await response.json();
       const authToken  = data.token;
       await AsyncStorage.setItem('token', authToken);
-      Alert.alert("Logged in successfully");
+      Alert.alert("Success! logged in successfully", "You have been successfully logged into.");
       setLoading(false);
       navigation.navigate(SceneName.Main);
 
     } else {
-      Alert.alert("Wrong email or password")
+      Alert.alert("Invalid email or password",  "The email and/or password you entered is incorrect.");
       setLoading(false);
     }
 

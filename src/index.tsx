@@ -15,10 +15,6 @@ import { useColorScheme } from "react-native";
 import { useDidMountEffect } from "~services/utils";
 import * as SplashScreen from "expo-splash-screen";
 
-// LogBox.ignoreLogs([
-//   "ViewPropTypes will be removed from React Native. Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'.",
-// ]);
-
 enableScreens();
 
 export default function App() {

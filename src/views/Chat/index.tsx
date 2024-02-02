@@ -135,8 +135,9 @@ function Chat() {
           'Content-Type': 'application/json',
         }
       });
-      const chat_profile = await chat_profile_req.json();
+      
       if (chat_profile_req.ok && chat_profile_req.status === 200) {
+        const chat_profile = await chat_profile_req.json();
         setChatProfile(chat_profile);
         setUpWebSocket();
         return true;
@@ -160,7 +161,6 @@ function Chat() {
 
   const handleWebSocketRealtime = async () => {
     const _r = await fetch(SERVER_URL + "/handler/");
-    const _b = await _r.json()
     if(_r.ok && _r.status === 200) return true;
     return false;
   }

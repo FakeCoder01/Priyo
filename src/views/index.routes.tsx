@@ -53,7 +53,7 @@ const Tabs = () => {
         options={{
           tabBarIcon: ({ focused, color }) =>
             focused ? <LogoActive style={{width : 35, height : 35}} /> : 
-            <LogoActive style={{width : 33, height : 33}} />,
+            <Logo style={{width : 33, height : 33}} />,
         }}
         name={SceneName.Swipe}
         component={SwipeView}

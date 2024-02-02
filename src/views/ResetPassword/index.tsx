@@ -56,7 +56,10 @@ const ResetPassword = () => {
         "send_type" : "forget"
       })
     });
-    const otp_res = await resend_otp.json();
+    if (resend_otp.ok && resend_otp.status == 200){
+      // const otp_res = await resend_otp.json();
+    }
+    Alert.alert("OTP sent to your email", "A otp has been send to email if an account exists with the email")
   }
 
 
@@ -86,15 +89,15 @@ const ResetPassword = () => {
 
       setLoading(true);
 
-      if (email == '' || password == '' || otp == '') {
+      if (email == '' || otp == '') {
         setLoading(false);
-        Alert.alert("Please enter your email & password");
+        Alert.alert("Email and OTP required", "Please enter your email & the otp");
         return;
       }
 
-      if (password != confirmPassword) {
+      if (password != confirmPassword || password == '') {
         setLoading(false);
-        Alert.alert("Password mismatch");
+        Alert.alert("Password mismatch", "Both password and confirm password must be the same.");
         return;
       }
 
@@ -110,14 +113,24 @@ const ResetPassword = () => {
           "confirm_password": confirmPassword
         }),
       });
-      const data = await response.json();
-      if (response.ok && response.status === 200 && data.next === 'login') {
-        setLoading(false);
-        navigation.navigate(SceneName.Authentication);
+
+
+
+      if (response.ok && response.status === 200) {
+        const data = await response.json();
+        if(data.next === 'login'){
+          setLoading(false);
+          navigation.navigate(SceneName.Authentication);
+        }else{
+          Alert.alert("Wrong OTP", "Please check your Email for OTP or click Resend");
+        }
       } else {
         setLoading(false);
-        Alert.alert("Email and/or OTP mismatch", data.detail);
+        Alert.alert("Something went wrong", "Please check your Email for OTP");
       }
+
+
+
     }
   };
 

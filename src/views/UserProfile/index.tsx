@@ -126,12 +126,12 @@ const UserProfile = ({ route }) => {
         "reason" : reason
       })
     });
-    const response = await report_and_block.json();
+    // const response = await report_and_block.json();
 
     if (report_and_block.ok && report_and_block.status === 201) {
       Alert.alert(firstName + " has been blocked", "You will not see him/her anymore");
     }else{
-      Alert.alert("Something went wrong")
+      Alert.alert("Something went wrong", "Please try again.")
     }
     
 
