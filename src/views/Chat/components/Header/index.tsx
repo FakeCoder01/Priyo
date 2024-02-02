@@ -27,10 +27,10 @@ export default function Component({name='', profile_id='', profile_pic='', match
     });
 
     if(unmatch.ok && unmatch.status === 204){
-      Alert.alert("You unmatched with " + name.split(" ")[0]);
+      Alert.alert("Unmatch successful", "You unmatched with " + name.split(" ")[0] + ". Both of you will no longer able to see any message or profile.");
       navigation.navigate(SceneName.Swipe);
     }else{
-      Alert.alert("Something went wrong");
+      Alert.alert("Something went wrong", "Couldn't complete unmatch. Please try again.");
     }
   };
 
@@ -51,7 +51,7 @@ export default function Component({name='', profile_id='', profile_pic='', match
   const goToUserProfilePage = async () => {
     const storedToken = await AsyncStorage.getItem('token');
 
-    const user_data = await fetch (SERVER_URL + "/api/profile/" + profile_id + "/", {
+    const user_data = await fetch(SERVER_URL + "/api/profile/" + profile_id + "/", {
       method : "GET",
       headers: {
         "Authorization": "Token " + storedToken,
@@ -59,11 +59,11 @@ export default function Component({name='', profile_id='', profile_pic='', match
       }
     });
 
-    const result_user = await user_data.json();
     if(user_data.ok && user_data.status === 200){
+      const result_user = await user_data.json();
       navigation.navigate(SceneName.UserProfile as any, {user : result_user})
     }else{
-      Alert.alert("Something went wrong");
+      Alert.alert("Something went wrong", "Can not load user profile.");
     }
   };
 

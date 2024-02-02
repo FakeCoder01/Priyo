@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import {
    Alert, KeyboardAvoidingView, Platform,
    TouchableOpacity, Image, TextInput,
-   FlatList
+   FlatList, View
 
 } from "react-native";
 import { ThemeContext } from "styled-components/native";
@@ -42,11 +42,11 @@ const InterestPage = ({ route }) => {
          if (storedToken !== null && storedToken !== '') {
             setToken(storedToken);
          } else {
-            Alert.alert("Something went wrong");
+            Alert.alert("Something went wrong", "Please login.");
          }
       } catch (error) {
          console.log('Error retrieving token : ', error);
-         Alert.alert("Something went wrong");
+         Alert.alert("Something went wrong", "Please login");
       }
    };
 
@@ -82,7 +82,7 @@ const InterestPage = ({ route }) => {
             setShowLoading(false);
             return true;
          } else {
-            console.log("Couldn't load tags");
+            Alert.alert("Loading error", "Interests can not be loaded")
             setShowLoading(false);
             return false;
          }
@@ -116,10 +116,10 @@ const InterestPage = ({ route }) => {
       if (tag_update_req.ok && tag_update_req.status === 200) {
          const tag_res = await tag_update_req.json();
          setContinueButtonDisabled(false);
-         Alert.alert("updated")
+         Alert.alert("Interests updated", "Your interests have been updated. This will help you to find better matches.")
          return true;
       } else {
-         Alert.alert("Tags couldn't be updated");
+         Alert.alert("Error updating", "There was an error updating your interests");
          setContinueButtonDisabled(false);
          return false;
       }
@@ -176,7 +176,7 @@ const InterestPage = ({ route }) => {
 
 
    return (
-      <>
+      <View>
          <KeyboardAvoidingView
             style={{ flexGrow: 1 }}
             keyboardVerticalOffset={
@@ -225,7 +225,7 @@ const InterestPage = ({ route }) => {
             disabled={continueButtonDisabled}
             style={{ height: insets.bottom }}
          />
-      </>
+      </View>
    );
 };
 

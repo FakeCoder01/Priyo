@@ -91,7 +91,6 @@ const InfoPage = ({ route }) => {
             console.log("Couldn't update preferences")
             return false;
         }
-        return false;
     }
 
     const handleQuestion = async () => {
@@ -136,7 +135,6 @@ const InfoPage = ({ route }) => {
             console.log("Couldn't update questions");
             return false;
         }
-        return false;
     };
 
 
@@ -177,7 +175,6 @@ const InfoPage = ({ route }) => {
                 console.log("Couldn't load preferences");
                 return false;
             }
-            return false;
         };
 
         const fetchUserQuestion = async () => {
@@ -210,7 +207,6 @@ const InfoPage = ({ route }) => {
                 console.log("Couldn't load questions");
                 return false;
             }
-            return false;
         };
         if (fetchUserPreference() && fetchUserQuestion()) setContinueButtonDisabled(false);
 
@@ -331,7 +327,7 @@ const InfoPage = ({ route }) => {
 
                     <RadioButtons
                         title="Looking for"
-                        data={["Dating", "Hookup", "Friend"]}
+                        data={["Dating", "Casual", "Friend"]}
                         value={hereFor}
                         onChange={setHereFor}
                     />
@@ -352,7 +348,7 @@ const InfoPage = ({ route }) => {
                     />
 
                     <RadioButtons
-                        title="Are you a student/work "
+                        title="Occupation"
                         data={["Student", "Job"]}
                         value={profession}
                         onChange={setProfession}
