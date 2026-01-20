@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "f0957b7c-c0d1-4c66-8f36-b1f7b097c89a"
+      }
+    },
+    "android": {
+      "package": "com.yooboy.priyo"
+    }
+  }
+}
